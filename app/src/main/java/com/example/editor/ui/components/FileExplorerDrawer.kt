@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -112,7 +114,12 @@ fun FileExplorerDrawer(
         tonalElevation = 1.dp,
         shape = RoundedCornerShape(topEnd = 24.dp, bottomEnd = 24.dp)
     ) {
-        Column(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .statusBarsPadding()
+                .navigationBarsPadding()
+        ) {
             // Header
             Row(
                 modifier = Modifier
@@ -460,7 +467,7 @@ private fun WorkspaceItemRow(
             ) {
                 if (!item.isDirectory && WebRunnerContentBuilder.isWebRunnable(item.name)) {
                     DropdownMenuItem(
-                        text = { Text("Run Web (HTML/CSS/JS)") },
+                        text = { Text("Run / Preview Code") },
                         leadingIcon = { Icon(Icons.Default.PlayArrow, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
                         onClick = {
                             menuExpanded = false
@@ -570,7 +577,7 @@ private fun RecentFileRow(
             ) {
                 if (WebRunnerContentBuilder.isWebRunnable(item.name, item.languageId)) {
                     DropdownMenuItem(
-                        text = { Text("Run Web (HTML/CSS/JS)") },
+                        text = { Text("Run / Preview Code") },
                         leadingIcon = { Icon(Icons.Default.PlayArrow, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
                         onClick = {
                             menuExpanded = false

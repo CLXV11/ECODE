@@ -3,6 +3,8 @@ package com.example.editor.ui
 import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.layout.Box
@@ -346,7 +348,7 @@ fun EditorScreen(
                                 shape = RoundedCornerShape(20.dp)
                             ) {
                                 DropdownMenuItem(
-                                    text = { Text("Run Web (HTML/CSS/JS)") },
+                                    text = { Text("Run / Preview Code") },
                                     leadingIcon = { Icon(Icons.Default.PlayArrow, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
                                     onClick = {
                                         topMenuExpanded = false
@@ -425,7 +427,11 @@ fun EditorScreen(
                 )
             },
             bottomBar = {
-                Column {
+                Column(
+                    modifier = Modifier
+                        .background(MaterialTheme.colorScheme.surfaceContainer)
+                        .navigationBarsPadding()
+                ) {
                     // Line & Column and Auto-Save Status Bar
                     val lineOffsets = remember(uiState.editorValue.text) {
                         EditorState.getLineStartOffsets(uiState.editorValue.text)

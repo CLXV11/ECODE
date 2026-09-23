@@ -15,13 +15,19 @@ enum class LogLevel {
 }
 
 /**
- * Supported file types for web preview and execution.
+ * Supported file types for web preview and multi-language execution.
  */
 enum class WebFileType(val displayName: String) {
-    HTML("HTML"),
-    CSS("CSS"),
-    JAVASCRIPT("JavaScript"),
-    UNKNOWN("Web Document")
+    HTML("HTML Preview"),
+    CSS("CSS Showcase"),
+    JAVASCRIPT("JavaScript / TypeScript"),
+    PYTHON("Python Runner"),
+    MARKDOWN("Markdown Preview"),
+    JSON("JSON Inspector"),
+    SVG("SVG Vector"),
+    SQL("SQL Query Runner"),
+    CODE("Code & Terminal Runner"),
+    UNKNOWN("Document Preview")
 }
 
 /**
