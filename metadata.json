@@ -1,0 +1,6 @@
+{
+  "name": "CodeXCroc",
+  "description": "High-performance Android code editor and mobile IDE featuring multi-language syntax highlighting, live web runner, multi-tab editing, and AMOLED mode.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
