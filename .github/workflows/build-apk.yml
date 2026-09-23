@@ -36,42 +36,39 @@ concurrency:
 
 jobs:
   build:
-    name: 🏗️ Build CodeXCroc APK
+    name: Build CodeXCroc APK
     runs-on: ubuntu-latest
-    timeout-minutes: 20 # لمنع تعليق الـ Builder أكثر من 20 دقيقة
+    timeout-minutes: 20
 
     steps:
-      - name: 📁 Checkout Repository
+      - name: Checkout Repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: ☕ Set up Java Development Kit (JDK 21)
-        uses: actions/checkout@v4
+      - name: Set up Java Development Kit (JDK 21)
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '21'
 
-      - name: 🐘 Setup Gradle
+      - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: wrapper
 
-      - name: 🔑 Make Gradle Executable
+      - name: Make Gradle Executable
         run: chmod +x gradlew
 
-      # تم إلغاء خطوة Robolectric لتفادي AWT EventQueue NullPointer Freeze
-
-      - name: 🔨 Build Debug APK
+      - name: Build Debug APK
         if: ${{ github.event.inputs.build_type != 'release' }}
         run: ./gradlew :app:assembleDebug --no-daemon -Djava.awt.headless=true
 
-      - name: 🚀 Build Release APK
+      - name: Build Release APK
         if: ${{ github.event.inputs.build_type == 'release' }}
         run: ./gradlew :app:assembleRelease --no-daemon -Djava.awt.headless=true
 
-      - name: 📦 Prepare APK Artifacts
+      - name: Prepare APK Artifacts
         id: prepare_apk
         run: |
           mkdir -p output_apks
@@ -84,14 +81,14 @@ jobs:
           echo "Listing output APKs:"
           ls -la output_apks/
 
-      - name: 📤 Upload APK Artifact
+      - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: CodeXCroc-APK
           path: output_apks/*.apk
           retention-days: 14
 
-      - name: 🏷️ Publish GitHub Release
+      - name: Publish GitHub Release
         if: ${{ startsWith(github.ref, 'refs/tags/v') || github.event.inputs.create_release == true }}
         uses: softprops/action-gh-release@v2
         with:
