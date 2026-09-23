@@ -60,6 +60,12 @@ jobs:
       - name: Make Gradle Executable
         run: chmod +x gradlew
 
+      - name: Generate Dummy Debug Keystore
+        run: |
+          keytool -genkey -v -keystore debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
+          mkdir -p ~/.android
+          cp debug.keystore ~/.android/debug.keystore
+
       - name: Build Debug APK
         if: ${{ github.event.inputs.build_type != 'release' }}
         run: ./gradlew :app:assembleDebug --no-daemon -Djava.awt.headless=true
