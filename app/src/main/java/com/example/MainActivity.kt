@@ -40,8 +40,14 @@ class MainActivity : ComponentActivity() {
                 LocaleHelper.isRtl(uiState.settings.uiLanguage)
             }
             val layoutDirection = if (isRtl) LayoutDirection.Rtl else LayoutDirection.Ltr
+            val appStrings = remember(uiState.settings.uiLanguage) {
+                com.example.editor.settings.AppStrings.forLanguage(uiState.settings.uiLanguage)
+            }
 
-            CompositionLocalProvider(LocalLayoutDirection provides layoutDirection) {
+            CompositionLocalProvider(
+                LocalLayoutDirection provides layoutDirection,
+                com.example.editor.settings.LocalAppStrings provides appStrings
+            ) {
                 MyApplicationTheme(
                     themeMode = uiState.settings.themeMode,
                     dynamicColor = false

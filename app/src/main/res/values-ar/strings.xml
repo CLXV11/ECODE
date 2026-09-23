@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">CodeXCroc</string>
     <string name="settings">الإعدادات</string>
@@ -5,15 +6,15 @@
     <string name="appearance">المظهر</string>
     <string name="behavior">السلوك</string>
     <string name="ui_language">لغة الواجهة</string>
-    <string name="theme">السمة / المظهر</string>
+    <string name="theme">السمة واللون</string>
     <string name="font_size">حجم الخط</string>
-    <string name="tab_size">حجم المسافة (Tab)</string>
-    <string name="word_wrap">التفاف الأسطر</string>
+    <string name="tab_size">حجم التاب</string>
+    <string name="word_wrap">التفاف النص</string>
     <string name="line_numbers">أرقام الأسطر</string>
-    <string name="highlight_current_line">تمييز السطر الحالي</string>
-    <string name="auto_indent">المسافة البادئة التلقائية</string>
+    <string name="highlight_current_line">تمييز السطر النشط</string>
+    <string name="auto_indent">إزاحة تلقائية</string>
     <string name="auto_close_brackets">إغلاق الأقواس تلقائياً</string>
-    <string name="auto_save">الحفظ التلقائي</string>
+    <string name="auto_save">حفظ تلقائي</string>
     <string name="explorer">المستكشف</string>
     <string name="workspace">مساحة العمل</string>
     <string name="recents">الملفات الأخيرة</string>
@@ -21,12 +22,12 @@
     <string name="new_folder">مجلد جديد</string>
     <string name="open_file">فتح ملف</string>
     <string name="folder_tree">شجرة المجلدات</string>
-    <string name="create_external_doc">إنشاء مستند خارجي (SAF)</string>
-    <string name="support">الدعم والتواصل</string>
-    <string name="run_code">تشغيل / معاينة</string>
+    <string name="create_external_doc">ملف خارجي (SAF)</string>
+    <string name="support">الدعم والمساعدة</string>
+    <string name="run_code">تشغيل / معاينة الكود</string>
     <string name="save">حفظ</string>
     <string name="cancel">إلغاء</string>
-    <string name="system_lang">النظام</string>
-    <string name="english_lang">English</string>
+    <string name="system_lang">افتراضي النظام</string>
+    <string name="english_lang">الإنجليزية</string>
     <string name="arabic_lang">العربية</string>
 </resources>

@@ -56,6 +56,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.displayCutout
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.union
+import com.example.editor.settings.LocalAppStrings
+import com.example.editor.ui.components.EditorBottomBar
 import com.example.editor.engine.EditorState
 import com.example.editor.io.RenameTarget
 import com.example.editor.runner.WebRunnerContentBuilder
@@ -250,8 +256,12 @@ fun EditorScreen(
             modifier = modifier.fillMaxSize().editorKeyboardShortcuts(shortcutActions),
             topBar = {
                 TopAppBar(
+                    windowInsets = WindowInsets.statusBars.union(WindowInsets.displayCutout),
                     title = {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(horizontal = 4.dp)
+                        ) {
                             if (activeTab != null) {
                                 LanguageIcon(
                                     iconDef = activeLanguage.icon,
@@ -265,7 +275,8 @@ fun EditorScreen(
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.Bold,
                                 maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
+                                overflow = TextOverflow.Ellipsis,
+                                modifier = Modifier.weight(1f, fill = false)
                             )
 
                             if (activeTab != null) {
@@ -524,6 +535,20 @@ fun EditorScreen(
                     activeSearchRangeIndex = uiState.activeMatchIndex,
                     shortcutActions = shortcutActions,
                     modifier = Modifier.weight(1f)
+                )
+
+                // Editor Bottom Accessory Bar (Undo, Redo, Tab, Indent, Symbols)
+                EditorBottomBar(
+                    canUndo = uiState.canUndo,
+                    canRedo = uiState.canRedo,
+                    onUndo = { viewModel.undo() },
+                    onRedo = { viewModel.redo() },
+                    onTab = { viewModel.insertTab() },
+                    onIndent = { viewModel.indentSelection() },
+                    onOutdent = { viewModel.dedentSelection() },
+                    onInsertSymbol = { sym -> viewModel.insertSymbol(sym) },
+                    onSearchClick = { viewModel.toggleSearch(true) },
+                    onGoToLineClick = { viewModel.setShowGoToLineDialog(true) }
                 )
             }
         }

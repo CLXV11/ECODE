@@ -37,6 +37,10 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.rememberScrollState
+import com.example.editor.settings.LocalAppStrings
+
 @Composable
 fun SearchReplaceBar(
     query: String,
@@ -58,6 +62,8 @@ fun SearchReplaceBar(
     onClose: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val strings = LocalAppStrings.current
+
     Surface(
         modifier = modifier.fillMaxWidth(),
         color = MaterialTheme.colorScheme.surfaceContainerHigh,
@@ -77,7 +83,7 @@ fun SearchReplaceBar(
                 OutlinedTextField(
                     value = query,
                     onValueChange = onQueryChange,
-                    placeholder = { Text("Find...", fontSize = 13.sp) },
+                    placeholder = { Text(strings.findPlaceholder, fontSize = 13.sp) },
                     singleLine = true,
                     shape = RoundedCornerShape(16.dp),
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
@@ -108,7 +114,7 @@ fun SearchReplaceBar(
                     enabled = totalMatches > 0,
                     modifier = Modifier.size(36.dp)
                 ) {
-                    Icon(Icons.Default.KeyboardArrowUp, contentDescription = "Previous match")
+                    Icon(Icons.Default.KeyboardArrowUp, contentDescription = strings.previousMatch)
                 }
 
                 IconButton(
@@ -116,14 +122,14 @@ fun SearchReplaceBar(
                     enabled = totalMatches > 0,
                     modifier = Modifier.size(36.dp)
                 ) {
-                    Icon(Icons.Default.KeyboardArrowDown, contentDescription = "Next match")
+                    Icon(Icons.Default.KeyboardArrowDown, contentDescription = strings.nextMatch)
                 }
 
                 IconButton(
                     onClick = onClose,
                     modifier = Modifier.size(36.dp)
                 ) {
-                    Icon(Icons.Default.Close, contentDescription = "Close search")
+                    Icon(Icons.Default.Close, contentDescription = strings.closeSearch)
                 }
             }
 
@@ -137,7 +143,7 @@ fun SearchReplaceBar(
                 OutlinedTextField(
                     value = replaceText,
                     onValueChange = onReplaceChange,
-                    placeholder = { Text("Replace...", fontSize = 13.sp) },
+                    placeholder = { Text(strings.replacePlaceholder, fontSize = 13.sp) },
                     singleLine = true,
                     shape = RoundedCornerShape(16.dp),
                     modifier = Modifier
@@ -160,7 +166,7 @@ fun SearchReplaceBar(
                     modifier = Modifier.height(38.dp),
                     contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 10.dp)
                 ) {
-                    Text("Replace", fontSize = 12.sp)
+                    Text(strings.replace, fontSize = 12.sp, maxLines = 1, softWrap = false)
                 }
 
                 Spacer(modifier = Modifier.width(4.dp))
@@ -172,34 +178,36 @@ fun SearchReplaceBar(
                     modifier = Modifier.height(38.dp),
                     contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 10.dp)
                 ) {
-                    Text("All", fontSize = 12.sp)
+                    Text(strings.replaceAll, fontSize = 12.sp, maxLines = 1, softWrap = false)
                 }
             }
 
-            Spacer(modifier = Modifier.height(4.dp))
+            Spacer(modifier = Modifier.height(6.dp))
 
-            // Options Row (Match Case, Whole Word, Regex)
+            // Options Row (Match Case, Whole Word, Regex) with horizontal scrolling to prevent wrapping / stacking
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .horizontalScroll(rememberScrollState()),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 FilterChip(
                     selected = matchCase,
                     onClick = onToggleMatchCase,
-                    label = { Text("Aa (Match Case)", fontSize = 11.sp) }
+                    label = { Text(strings.matchCase, fontSize = 11.sp, maxLines = 1, softWrap = false) }
                 )
 
                 FilterChip(
                     selected = wholeWord,
                     onClick = onToggleWholeWord,
-                    label = { Text("\\b (Word)", fontSize = 11.sp) }
+                    label = { Text(strings.wholeWord, fontSize = 11.sp, maxLines = 1, softWrap = false) }
                 )
 
                 FilterChip(
                     selected = useRegex,
                     onClick = onToggleRegex,
-                    label = { Text(".* (Regex)", fontSize = 11.sp) }
+                    label = { Text(strings.regex, fontSize = 11.sp, maxLines = 1, softWrap = false) }
                 )
             }
         }

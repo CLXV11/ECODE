@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
@@ -21,7 +22,9 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -49,6 +52,19 @@ import androidx.compose.ui.input.key.onPreviewKeyEvent
 import com.example.editor.syntax.LanguageDefinition
 import com.example.editor.syntax.SyntaxTheme
 import com.example.editor.syntax.SyntaxVisualTransformation
+
+import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.gestures.detectVerticalDragGestures
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.offset
+import androidx.compose.material3.Surface
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.IntOffset
+import kotlinx.coroutines.launch
 
 @Composable
 fun CodeEditorView(
@@ -126,11 +142,13 @@ fun CodeEditorView(
 
     // Always enforce LTR layout direction inside the code editor
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
-        Box(
+        BoxWithConstraints(
             modifier = modifier
                 .fillMaxSize()
                 .background(theme.background)
         ) {
+            val containerHeightPx = with(LocalDensity.current) { maxHeight.toPx() }
+
             Row(
                 modifier = Modifier
                     .fillMaxSize()
@@ -259,6 +277,97 @@ fun CodeEditorView(
                             .widthIn(min = 600.dp)
                     )
                 }
+            }
+
+            // High-precision fast scrollbar handle
+            FastScrollerOverlay(
+                scrollState = verticalScrollState,
+                totalLines = maxOf(1, lineOffsets.size),
+                containerHeightPx = containerHeightPx
+            )
+        }
+    }
+}
+
+@Composable
+private fun FastScrollerOverlay(
+    scrollState: ScrollState,
+    totalLines: Int,
+    containerHeightPx: Float
+) {
+    if (scrollState.maxValue <= 0 || containerHeightPx <= 0f) return
+
+    val coroutineScope = rememberCoroutineScope()
+    var isDragging by remember { mutableStateOf(false) }
+
+    val trackHeight = containerHeightPx
+    val thumbMinHeight = 54f
+    val thumbHeight = (trackHeight * (trackHeight / (trackHeight + scrollState.maxValue)))
+        .coerceIn(thumbMinHeight, trackHeight * 0.35f)
+    val availableTravel = (trackHeight - thumbHeight).coerceAtLeast(1f)
+
+    val currentRatio = (scrollState.value.toFloat() / scrollState.maxValue.toFloat()).coerceIn(0f, 1f)
+    val thumbOffset = currentRatio * availableTravel
+    val currentLine = (currentRatio * (totalLines - 1)).toInt() + 1
+
+    Box(
+        modifier = Modifier
+            .fillMaxHeight()
+            .width(44.dp)
+            .pointerInput(scrollState.maxValue, availableTravel) {
+                detectVerticalDragGestures(
+                    onDragStart = { offset ->
+                        isDragging = true
+                        val newRatio = ((offset.y - thumbHeight / 2) / availableTravel).coerceIn(0f, 1f)
+                        coroutineScope.launch {
+                            scrollState.scrollTo((newRatio * scrollState.maxValue).toInt())
+                        }
+                    },
+                    onDragEnd = { isDragging = false },
+                    onDragCancel = { isDragging = false },
+                    onVerticalDrag = { change, dragAmount ->
+                        change.consume()
+                        val newOffset = (thumbOffset + dragAmount).coerceIn(0f, availableTravel)
+                        val newRatio = (newOffset / availableTravel).coerceIn(0f, 1f)
+                        coroutineScope.launch {
+                            scrollState.scrollTo((newRatio * scrollState.maxValue).toInt())
+                        }
+                    }
+                )
+            }
+    ) {
+        // Fast scroller thumb handle
+        Box(
+            modifier = Modifier
+                .offset { IntOffset(x = 0, y = thumbOffset.toInt()) }
+                .padding(end = 4.dp)
+                .width(if (isDragging) 10.dp else 6.dp)
+                .height(with(LocalDensity.current) { thumbHeight.toDp() })
+                .clip(RoundedCornerShape(6.dp))
+                .background(if (isDragging) MaterialTheme.colorScheme.primary else Color.White.copy(alpha = 0.38f))
+        )
+
+        // Line number badge during fast scrub
+        if (isDragging) {
+            Surface(
+                modifier = Modifier
+                    .offset {
+                        IntOffset(
+                            x = -130,
+                            y = (thumbOffset + thumbHeight / 2 - 20).toInt().coerceAtLeast(10)
+                        )
+                    },
+                shape = RoundedCornerShape(16.dp),
+                color = MaterialTheme.colorScheme.primaryContainer,
+                shadowElevation = 6.dp
+            ) {
+                Text(
+                    text = "Ln $currentLine / $totalLines",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
+                    fontWeight = FontWeight.Bold
+                )
             }
         }
     }

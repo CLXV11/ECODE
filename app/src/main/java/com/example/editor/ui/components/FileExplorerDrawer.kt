@@ -78,6 +78,10 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.statusBarsPadding
+import com.example.editor.settings.LocalAppStrings
+
 @Composable
 fun FileExplorerDrawer(
     currentDir: File,

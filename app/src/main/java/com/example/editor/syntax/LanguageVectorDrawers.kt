@@ -10,6 +10,7 @@ import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.rotate
 
 /**
  * Handcrafted, razor-sharp vector drawers for programming language emblems and file extensions.
@@ -22,25 +23,44 @@ object LanguageVectorDrawers {
         with(scope) {
             val w = size
             val h = size
-            drawRoundRect(Color(0xFF1E1E2E), size = Size(w, h), cornerRadius = CornerRadius(w * 0.22f))
+            drawRoundRect(Color(0xFF1B1B26), size = Size(w, h), cornerRadius = CornerRadius(w * 0.22f))
 
-            // Top-right triangle (Purple)
+            // Upper diagonal shape (JetBrains Purple)
             val p1 = Path().apply {
-                moveTo(0f, 0f); lineTo(w, 0f); lineTo(0f, h); close()
+                moveTo(w * 0.12f, h * 0.12f)
+                lineTo(w * 0.88f, h * 0.12f)
+                lineTo(w * 0.12f, h * 0.88f)
+                close()
             }
             drawPath(p1, Color(0xFF7F52FF))
 
-            // Bottom-right triangle (Orange)
+            // Middle accent ribbon (JetBrains Pink / Violet)
             val p2 = Path().apply {
-                moveTo(w, 0f); lineTo(w, h); lineTo(w * 0.45f, h); close()
+                moveTo(w * 0.50f, h * 0.12f)
+                lineTo(w * 0.88f, h * 0.50f)
+                lineTo(w * 0.50f, h * 0.88f)
+                lineTo(w * 0.12f, h * 0.50f)
+                close()
             }
-            drawPath(p2, Color(0xFFFF7D00))
+            drawPath(p2, Color(0xFFC757BC))
 
-            // Bottom-left triangle (Blue)
+            // Lower right corner triangle (JetBrains Orange)
             val p3 = Path().apply {
-                moveTo(0f, h * 0.5f); lineTo(w * 0.5f, h); lineTo(0f, h); close()
+                moveTo(w * 0.88f, h * 0.12f)
+                lineTo(w * 0.88f, h * 0.88f)
+                lineTo(w * 0.35f, h * 0.88f)
+                close()
             }
-            drawPath(p3, Color(0xFF0095D5))
+            drawPath(p3, Color(0xFFFF7D00))
+
+            // Lower left wedge (JetBrains Cyan / Blue)
+            val p4 = Path().apply {
+                moveTo(w * 0.12f, h * 0.45f)
+                lineTo(w * 0.55f, h * 0.88f)
+                lineTo(w * 0.12f, h * 0.88f)
+                close()
+            }
+            drawPath(p4, Color(0xFF0095D5))
         }
     }
 
@@ -48,42 +68,34 @@ object LanguageVectorDrawers {
         with(scope) {
             val w = size
             val h = size
-            drawRoundRect(Color(0xFF20262E), size = Size(w, h), cornerRadius = CornerRadius(w * 0.22f))
+            drawRoundRect(Color(0xFF1E232A), size = Size(w, h), cornerRadius = CornerRadius(w * 0.22f))
 
-            // Blue snake (Top)
-            val bluePath = Path().apply {
-                moveTo(w * 0.5f, h * 0.16f)
-                lineTo(w * 0.68f, h * 0.16f)
-                cubicTo(w * 0.82f, h * 0.16f, w * 0.82f, h * 0.42f, w * 0.82f, h * 0.42f)
-                lineTo(w * 0.5f, h * 0.42f)
-                lineTo(w * 0.5f, h * 0.54f)
-                lineTo(w * 0.76f, h * 0.54f)
-                cubicTo(w * 0.88f, h * 0.54f, w * 0.88f, h * 0.72f, w * 0.76f, h * 0.72f)
-                lineTo(w * 0.68f, h * 0.72f); lineTo(w * 0.68f, h * 0.62f)
-                lineTo(w * 0.38f, h * 0.62f); lineTo(w * 0.38f, h * 0.32f)
-                lineTo(w * 0.64f, h * 0.32f); lineTo(w * 0.64f, h * 0.24f)
-                lineTo(w * 0.5f, h * 0.24f); close()
+            // Official Python Top Snake (Blue)
+            val blueSnake = Path().apply {
+                moveTo(w * 0.49f, h * 0.12f)
+                cubicTo(w * 0.31f, h * 0.12f, w * 0.23f, h * 0.20f, w * 0.23f, h * 0.30f)
+                lineTo(w * 0.23f, h * 0.39f)
+                lineTo(w * 0.49f, h * 0.39f)
+                lineTo(w * 0.49f, h * 0.43f)
+                lineTo(w * 0.18f, h * 0.43f)
+                cubicTo(w * 0.08f, h * 0.43f, w * 0.08f, h * 0.58f, w * 0.18f, h * 0.58f)
+                lineTo(w * 0.28f, h * 0.58f)
+                lineTo(w * 0.28f, h * 0.50f)
+                cubicTo(w * 0.28f, h * 0.43f, w * 0.34f, h * 0.37f, w * 0.41f, h * 0.37f)
+                lineTo(w * 0.61f, h * 0.37f)
+                cubicTo(w * 0.67f, h * 0.37f, w * 0.72f, h * 0.32f, w * 0.72f, h * 0.26f)
+                lineTo(w * 0.72f, h * 0.19f)
+                cubicTo(w * 0.72f, h * 0.14f, w * 0.62f, h * 0.12f, w * 0.49f, h * 0.12f)
+                close()
             }
-            drawPath(bluePath, color = Color(0xFF3776AB), style = Fill)
+            drawPath(blueSnake, color = Color(0xFF387EB8))
+            drawCircle(Color.White, radius = w * 0.038f, center = Offset(w * 0.35f, h * 0.21f))
 
-            // Yellow snake (Bottom)
-            val yellowPath = Path().apply {
-                moveTo(w * 0.5f, h * 0.84f)
-                lineTo(w * 0.32f, h * 0.84f)
-                cubicTo(w * 0.18f, h * 0.84f, w * 0.18f, h * 0.58f, w * 0.18f, h * 0.58f)
-                lineTo(w * 0.5f, h * 0.58f)
-                lineTo(w * 0.5f, h * 0.46f)
-                lineTo(w * 0.24f, h * 0.46f)
-                cubicTo(w * 0.12f, h * 0.46f, w * 0.12f, h * 0.28f, w * 0.24f, h * 0.28f)
-                lineTo(w * 0.32f, h * 0.28f); lineTo(w * 0.32f, h * 0.38f)
-                lineTo(w * 0.62f, h * 0.38f); lineTo(w * 0.62f, h * 0.68f)
-                lineTo(w * 0.36f, h * 0.68f); lineTo(w * 0.36f, h * 0.76f)
-                lineTo(w * 0.5f, h * 0.76f); close()
+            // Official Python Bottom Snake (Yellow) - 180° Rotated Counterpart
+            rotate(180f, Offset(w * 0.5f, h * 0.5f)) {
+                drawPath(blueSnake, color = Color(0xFFFFD43B))
+                drawCircle(Color.White, radius = w * 0.038f, center = Offset(w * 0.35f, h * 0.21f))
             }
-            drawPath(yellowPath, color = Color(0xFFFFD43B), style = Fill)
-
-            drawCircle(Color.White, radius = w * 0.045f, center = Offset(w * 0.58f, h * 0.22f))
-            drawCircle(Color.White, radius = w * 0.045f, center = Offset(w * 0.42f, h * 0.78f))
         }
     }
 

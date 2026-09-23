@@ -109,6 +109,7 @@ object WebRunnerContentBuilder {
             ext in listOf("css", "scss", "sass", "less") || languageId == "css" -> WebFileType.CSS
             ext in listOf("js", "mjs", "cjs", "jsx", "ts", "tsx") || languageId in listOf("javascript", "typescript") -> WebFileType.JAVASCRIPT
             ext in listOf("py", "pyw", "python") || languageId == "python" -> WebFileType.PYTHON
+            ext in listOf("kt", "kts", "kotlin") || languageId == "kotlin" -> WebFileType.KOTLIN
             ext in listOf("md", "markdown") || languageId == "markdown" -> WebFileType.MARKDOWN
             ext in listOf("json") || languageId == "json" -> WebFileType.JSON
             ext in listOf("svg") -> WebFileType.SVG
@@ -140,6 +141,7 @@ object WebRunnerContentBuilder {
             WebFileType.CSS -> buildCssShowcaseDocument(title, rawContent)
             WebFileType.JAVASCRIPT -> buildJsRunnerDocument(title, rawContent)
             WebFileType.PYTHON -> buildPythonRunnerDocument(title, rawContent)
+            WebFileType.KOTLIN -> buildKotlinRunnerDocument(title, rawContent)
             WebFileType.MARKDOWN -> buildMarkdownPreviewDocument(title, rawContent)
             WebFileType.JSON -> buildJsonInspectorDocument(title, rawContent)
             WebFileType.SVG -> buildSvgPreviewDocument(title, rawContent)
@@ -288,8 +290,8 @@ object WebRunnerContentBuilder {
     }
 
     private fun buildPythonRunnerDocument(fileName: String, pyCode: String): String {
-        val escapedPy = escapeJs(pyCode)
         val rawEscapedForPre = escapeHtml(pyCode)
+        val pythonEngineScript = PythonInterpreterJs.getScript()
         return """
 <!DOCTYPE html>
 <html lang="en">
@@ -298,9 +300,7 @@ object WebRunnerContentBuilder {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Python 3 Runner - $fileName</title>
     $CONSOLE_BRIDGE_SCRIPT
-    <!-- Brython Browser Python Engine -->
-    <script src="https://cdn.jsdelivr.net/npm/brython@3.12.0/brython.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/brython@3.12.0/brython_stdlib.js"></script>
+    $pythonEngineScript
     <style>
         :root {
             --bg-color: #0b0f19;
@@ -388,8 +388,41 @@ object WebRunnerContentBuilder {
             color: #e5e7eb;
             white-space: pre-wrap;
             word-break: break-all;
+            min-height: 140px;
             max-height: 380px;
             overflow-y: auto;
+        }
+        .terminal-input-bar {
+            display: flex;
+            align-items: center;
+            background: #111827;
+            border-top: 1px solid var(--border-color);
+            padding: 8px 12px;
+        }
+        .terminal-input-bar input {
+            flex: 1;
+            background: #030712;
+            border: 1px solid #374151;
+            border-radius: 6px;
+            color: #f3f4f6;
+            padding: 6px 10px;
+            font-family: monospace;
+            font-size: 13px;
+            outline: none;
+        }
+        .terminal-input-bar input:focus {
+            border-color: #38bdf8;
+        }
+        .terminal-input-bar button {
+            margin-left: 8px;
+            background: #0284c7;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 14px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
         }
         .code-preview-collapsible {
             background: #111827;
@@ -401,7 +434,6 @@ object WebRunnerContentBuilder {
             font-size: 12px;
             font-weight: 600;
             color: #9ca3af;
-            cursor: pointer;
             margin-bottom: 8px;
         }
         .source-code {
@@ -415,7 +447,7 @@ object WebRunnerContentBuilder {
         }
     </style>
 </head>
-<body onload="initPythonRunner()">
+<body onload="startPythonExecution()">
     <div class="header">
         <div class="header-title">
             <span class="py-badge">Python 3.12</span>
@@ -437,7 +469,12 @@ object WebRunnerContentBuilder {
             <div class="terminal-title">python3 -u $fileName</div>
             <div style="font-size:10px;color:#6b7280;" id="timerBadge">0.00s</div>
         </div>
-        <div id="terminalOutput" class="terminal-body">Launching Python engine...</div>
+        <div id="terminalOutput" class="terminal-body"></div>
+        <div id="stdinContainer" class="terminal-input-bar" style="display:none;">
+            <span style="color:#22c55e;font-family:monospace;font-weight:bold;margin-right:6px;">❯</span>
+            <input id="stdinField" type="text" placeholder="Enter input..." autocomplete="off">
+            <button id="stdinSubmitBtn">Send</button>
+        </div>
     </div>
 
     <div class="code-preview-collapsible">
@@ -445,16 +482,18 @@ object WebRunnerContentBuilder {
         <pre class="source-code">$rawEscapedForPre</pre>
     </div>
 
+    <script type="text/plain" id="sourceCode">$rawEscapedForPre</script>
+
     <script>
         var term = document.getElementById('terminalOutput');
         var statusBadge = document.getElementById('statusBadge');
         var timerBadge = document.getElementById('timerBadge');
+        var stdinContainer = document.getElementById('stdinContainer');
+        var stdinField = document.getElementById('stdinField');
+        var stdinSubmitBtn = document.getElementById('stdinSubmitBtn');
         var startTime = performance.now();
 
         function logToTerm(text, isError) {
-            if (term.textContent === 'Launching Python engine...') {
-                term.textContent = '';
-            }
             term.textContent += text;
             term.scrollTop = term.scrollHeight;
             if (window.CLXV11_Bridge && window.CLXV11_Bridge.postMessage) {
@@ -462,91 +501,309 @@ object WebRunnerContentBuilder {
             }
         }
 
-        function finishExecution(success) {
+        function promptInput(promptText) {
+            return new Promise(function(resolve) {
+                stdinContainer.style.display = 'flex';
+                stdinField.value = '';
+                stdinField.focus();
+
+                function submit() {
+                    var val = stdinField.value;
+                    stdinContainer.style.display = 'none';
+                    logToTerm(val + '\n', false);
+                    resolve(val);
+                }
+
+                stdinSubmitBtn.onclick = submit;
+                stdinField.onkeydown = function(e) {
+                    if (e.key === 'Enter') submit();
+                };
+            });
+        }
+
+        function onComplete() {
             var elapsed = ((performance.now() - startTime) / 1000).toFixed(2);
             timerBadge.textContent = elapsed + 's';
-            if (success) {
-                statusBadge.textContent = 'Completed (0)';
-                statusBadge.style.background = '#064e3b';
-                statusBadge.style.color = '#34d399';
-                if (!term.textContent.trim()) {
-                    logToTerm("Program executed with exit status 0 (no output produced).\n", false);
-                }
-            } else {
-                statusBadge.textContent = 'Error (1)';
-                statusBadge.style.background = '#7f1d1d';
-                statusBadge.style.color = '#f87171';
+            statusBadge.textContent = 'Completed (0)';
+            statusBadge.style.background = '#064e3b';
+            statusBadge.style.color = '#34d399';
+            if (!term.textContent.trim()) {
+                logToTerm("Program executed with exit status 0 (no output produced).\n", false);
             }
         }
 
-        // Fast client-side fallback interpreter for Python print and simple logic
-        function runFallbackInterpreter(code) {
-            try {
-                var lines = code.split('\n');
-                var printedAny = false;
-                for (var i = 0; i < lines.length; i++) {
-                    var line = lines[i].trim();
-                    if (line.startsWith('print(') && line.endsWith(')')) {
-                        var inner = line.substring(6, line.length - 1);
-                        var outputStr = '';
-                        try {
-                            if (inner.startsWith('f"') || inner.startsWith("f'")) {
-                                outputStr = inner.substring(2, inner.length - 1);
-                            } else if ((inner.startsWith('"') && inner.endsWith('"')) || (inner.startsWith("'") && inner.endsWith("'"))) {
-                                outputStr = inner.substring(1, inner.length - 1);
-                            } else {
-                                outputStr = inner;
-                            }
-                        } catch(e) {
-                            outputStr = inner;
-                        }
-                        logToTerm(outputStr + '\n', false);
-                        printedAny = true;
-                    }
-                }
-                if (!printedAny) {
-                    logToTerm("✓ Python script syntax verified.\n", false);
-                }
-                finishExecution(true);
-            } catch(e) {
-                logToTerm("Traceback (most recent call last):\n  File \"$fileName\", line 1\n" + e.message + "\n", true);
-                finishExecution(false);
+        function onError(err) {
+            var elapsed = ((performance.now() - startTime) / 1000).toFixed(2);
+            timerBadge.textContent = elapsed + 's';
+            statusBadge.textContent = 'Error (1)';
+            statusBadge.style.background = '#7f1d1d';
+            statusBadge.style.color = '#f87171';
+            logToTerm(err + '\n', true);
+        }
+
+        function startPythonExecution() {
+            var source = document.getElementById('sourceCode').textContent;
+            window.PythonEngine.run(source, function(txt) { logToTerm(txt, false); }, promptInput, onComplete, onError);
+        }
+    </script>
+</body>
+</html>
+"""
+    }
+
+    private fun buildKotlinRunnerDocument(fileName: String, ktCode: String): String {
+        val rawEscapedForPre = escapeHtml(ktCode)
+        val kotlinEngineScript = KotlinInterpreterJs.getScript()
+        return """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kotlin Runner - $fileName</title>
+    $CONSOLE_BRIDGE_SCRIPT
+    $kotlinEngineScript
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --terminal-bg: #030712;
+            --border-color: #1f2937;
+            --text-color: #f3f4f6;
+            --kt-purple: #7f52ff;
+            --kt-red: #e4485d;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-color);
+            color: var(--text-color);
+            padding: 12px;
+            min-height: 100vh;
+        }
+        .header {
+            background: #111827;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .kt-badge {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #7f52ff, #e4485d);
+            color: #fff;
+        }
+        .status-pill {
+            font-size: 11px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            background: #064e3b;
+            color: #34d399;
+            font-weight: 600;
+        }
+        .terminal-container {
+            background: var(--terminal-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+            margin-bottom: 12px;
+        }
+        .terminal-header {
+            background: #111827;
+            padding: 8px 14px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .terminal-dots {
+            display: flex;
+            gap: 6px;
+        }
+        .dot { width: 10px; height: 10px; border-radius: 50%; }
+        .dot-red { background: #ef4444; }
+        .dot-yellow { background: #eab308; }
+        .dot-green { background: #22c55e; }
+        .terminal-title {
+            font-size: 11px;
+            color: #9ca3af;
+            font-family: monospace;
+        }
+        .terminal-body {
+            padding: 14px;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            color: #e5e7eb;
+            white-space: pre-wrap;
+            word-break: break-all;
+            min-height: 140px;
+            max-height: 380px;
+            overflow-y: auto;
+        }
+        .terminal-input-bar {
+            display: flex;
+            align-items: center;
+            background: #111827;
+            border-top: 1px solid var(--border-color);
+            padding: 8px 12px;
+        }
+        .terminal-input-bar input {
+            flex: 1;
+            background: #030712;
+            border: 1px solid #374151;
+            border-radius: 6px;
+            color: #f3f4f6;
+            padding: 6px 10px;
+            font-family: monospace;
+            font-size: 13px;
+            outline: none;
+        }
+        .terminal-input-bar input:focus {
+            border-color: #7f52ff;
+        }
+        .terminal-input-bar button {
+            margin-left: 8px;
+            background: #7f52ff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 14px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .code-preview-collapsible {
+            background: #111827;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 12px;
+        }
+        .collapsible-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: #9ca3af;
+            margin-bottom: 8px;
+        }
+        .source-code {
+            font-family: monospace;
+            font-size: 12px;
+            background: #030712;
+            padding: 10px;
+            border-radius: 8px;
+            overflow-x: auto;
+            color: #c4b5fd;
+        }
+    </style>
+</head>
+<body onload="startKotlinExecution()">
+    <div class="header">
+        <div class="header-title">
+            <span class="kt-badge">Kotlin 2.0</span>
+            <div>
+                <div style="font-weight: 700; font-size: 14px;">$fileName</div>
+                <div style="font-size: 11px; color: #9ca3af;">CodeXCroc Multi-Language Virtual Runtime</div>
+            </div>
+        </div>
+        <span id="statusBadge" class="status-pill">Executing...</span>
+    </div>
+
+    <div class="terminal-container">
+        <div class="terminal-header">
+            <div class="terminal-dots">
+                <div class="dot dot-red"></div>
+                <div class="dot dot-yellow"></div>
+                <div class="dot dot-green"></div>
+            </div>
+            <div class="terminal-title">kotlinc -script $fileName</div>
+            <div style="font-size:10px;color:#6b7280;" id="timerBadge">0.00s</div>
+        </div>
+        <div id="terminalOutput" class="terminal-body"></div>
+        <div id="stdinContainer" class="terminal-input-bar" style="display:none;">
+            <span style="color:#7f52ff;font-family:monospace;font-weight:bold;margin-right:6px;">❯</span>
+            <input id="stdinField" type="text" placeholder="Enter input..." autocomplete="off">
+            <button id="stdinSubmitBtn">Send</button>
+        </div>
+    </div>
+
+    <div class="code-preview-collapsible">
+        <div class="collapsible-title">▶ Source Code ($fileName)</div>
+        <pre class="source-code">$rawEscapedForPre</pre>
+    </div>
+
+    <script type="text/plain" id="sourceCode">$rawEscapedForPre</script>
+
+    <script>
+        var term = document.getElementById('terminalOutput');
+        var statusBadge = document.getElementById('statusBadge');
+        var timerBadge = document.getElementById('timerBadge');
+        var stdinContainer = document.getElementById('stdinContainer');
+        var stdinField = document.getElementById('stdinField');
+        var stdinSubmitBtn = document.getElementById('stdinSubmitBtn');
+        var startTime = performance.now();
+
+        function logToTerm(text, isError) {
+            term.textContent += text;
+            term.scrollTop = term.scrollHeight;
+            if (window.CLXV11_Bridge && window.CLXV11_Bridge.postMessage) {
+                window.CLXV11_Bridge.postMessage(isError ? 'ERROR' : 'LOG', text, '$fileName', 0, 0, '');
             }
         }
 
-        function initPythonRunner() {
-            var pythonSource = "$escapedPy";
-            term.textContent = '';
+        function promptInput(promptText) {
+            return new Promise(function(resolve) {
+                stdinContainer.style.display = 'flex';
+                stdinField.value = '';
+                stdinField.focus();
 
-            if (typeof brython !== 'undefined') {
-                try {
-                    brython();
-                    // Setup Brython sys.stdout redirection
-                    var script = document.createElement('script');
-                    script.type = 'text/python';
-                    script.textContent = "import sys\n" +
-                        "from browser import window\n" +
-                        "class NativeOut:\n" +
-                        "    def write(self, s):\n" +
-                        "        window.logToTerm(str(s), False)\n" +
-                        "    def flush(self):\n" +
-                        "        pass\n" +
-                        "class NativeErr:\n" +
-                        "    def write(self, s):\n" +
-                        "        window.logToTerm(str(s), True)\n" +
-                        "    def flush(self):\n" +
-                        "        pass\n" +
-                        "sys.stdout = NativeOut()\n" +
-                        "sys.stderr = NativeErr()\n" +
-                        pythonSource + "\n" +
-                        "window.finishExecution(True)\n";
-                    document.body.appendChild(script);
-                } catch(err) {
-                    runFallbackInterpreter(pythonSource);
+                function submit() {
+                    var val = stdinField.value;
+                    stdinContainer.style.display = 'none';
+                    logToTerm(val + '\n', false);
+                    resolve(val);
                 }
-            } else {
-                runFallbackInterpreter(pythonSource);
+
+                stdinSubmitBtn.onclick = submit;
+                stdinField.onkeydown = function(e) {
+                    if (e.key === 'Enter') submit();
+                };
+            });
+        }
+
+        function onComplete() {
+            var elapsed = ((performance.now() - startTime) / 1000).toFixed(2);
+            timerBadge.textContent = elapsed + 's';
+            statusBadge.textContent = 'Completed (0)';
+            statusBadge.style.background = '#064e3b';
+            statusBadge.style.color = '#34d399';
+            if (!term.textContent.trim()) {
+                logToTerm("Program executed with exit status 0 (no output produced).\n", false);
             }
+        }
+
+        function onError(err) {
+            var elapsed = ((performance.now() - startTime) / 1000).toFixed(2);
+            timerBadge.textContent = elapsed + 's';
+            statusBadge.textContent = 'Error (1)';
+            statusBadge.style.background = '#7f1d1d';
+            statusBadge.style.color = '#f87171';
+            logToTerm(err + '\n', true);
+        }
+
+        function startKotlinExecution() {
+            var source = document.getElementById('sourceCode').textContent;
+            window.KotlinEngine.run(source, function(txt) { logToTerm(txt, false); }, promptInput, onComplete, onError);
         }
     </script>
 </body>

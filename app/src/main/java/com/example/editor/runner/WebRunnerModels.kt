@@ -22,6 +22,7 @@ enum class WebFileType(val displayName: String) {
     CSS("CSS Showcase"),
     JAVASCRIPT("JavaScript / TypeScript"),
     PYTHON("Python Runner"),
+    KOTLIN("Kotlin Runner"),
     MARKDOWN("Markdown Preview"),
     JSON("JSON Inspector"),
     SVG("SVG Vector"),

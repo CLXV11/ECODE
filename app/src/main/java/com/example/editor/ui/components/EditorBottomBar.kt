@@ -33,6 +33,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 
 @Composable
@@ -54,14 +55,15 @@ fun EditorBottomBar(
     Surface(
         modifier = modifier
             .fillMaxWidth()
-            .height(48.dp),
+            .navigationBarsPadding(),
         color = MaterialTheme.colorScheme.surfaceContainer,
         tonalElevation = 3.dp,
         shape = RoundedCornerShape(topStart = 18.dp, topEnd = 18.dp)
     ) {
         Row(
             modifier = Modifier
-                .fillMaxHeight()
+                .fillMaxWidth()
+                .height(48.dp)
                 .horizontalScroll(scrollState)
                 .padding(horizontal = 4.dp),
             verticalAlignment = Alignment.CenterVertically
