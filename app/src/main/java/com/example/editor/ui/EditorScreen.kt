@@ -278,19 +278,10 @@ fun EditorScreen(
                         Row(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Icon(
-                                imageVector = Icons.Default.Code,
-                                contentDescription = "ECODE",
-                                tint = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.size(24.dp)
-                            )
-
-                            Spacer(modifier = Modifier.width(8.dp))
-
                             Text(
                                 text = "ECODE",
-                                fontSize = 17.sp,
-                                fontWeight = FontWeight.Bold,
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Black,
                                 color = MaterialTheme.colorScheme.onSurface
                             )
 
@@ -299,11 +290,9 @@ fun EditorScreen(
                             // Interactive language switcher chip with badge and dropdown arrow
                             Surface(
                                 onClick = { viewModel.setShowLanguageDialog(true) },
-                                shape = RoundedCornerShape(12.dp),
+                                shape = RoundedCornerShape(16.dp),
                                 color = MaterialTheme.colorScheme.surfaceVariant,
-                                modifier = Modifier
-                                    .testTag("language_selector_chip")
-                                    .widthIn(max = 140.dp)
+                                modifier = Modifier.testTag("language_selector_chip")
                             ) {
                                 Row(
                                     verticalAlignment = Alignment.CenterVertically,
@@ -313,22 +302,21 @@ fun EditorScreen(
                                         iconDef = activeLanguage.icon,
                                         size = 18.dp
                                     )
-                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Spacer(modifier = Modifier.width(5.dp))
                                     Text(
                                         text = activeLanguage.name,
                                         fontSize = 12.sp,
                                         fontWeight = FontWeight.SemiBold,
                                         maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                        modifier = Modifier.weight(1f, fill = false)
+                                        softWrap = false,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                     Spacer(modifier = Modifier.width(2.dp))
                                     Icon(
                                         imageVector = Icons.Default.ArrowDropDown,
                                         contentDescription = "Switch Language",
                                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                        modifier = Modifier.size(18.dp)
+                                        modifier = Modifier.size(16.dp)
                                     )
                                 }
                             }
@@ -341,7 +329,7 @@ fun EditorScreen(
                                     if (drawerState.isClosed) drawerState.open() else drawerState.close()
                                 }
                             },
-                            modifier = Modifier.testTag("drawer_menu_button")
+                            modifier = Modifier.testTag("drawer_menu_button").size(40.dp)
                         ) {
                             Icon(Icons.Default.Menu, contentDescription = strings.openDrawer)
                         }
@@ -351,7 +339,7 @@ fun EditorScreen(
                         val isWebRunnable = activeTab != null && WebRunnerContentBuilder.isWebRunnable(activeTab.file.name, activeTab.language.id)
                         IconButton(
                             onClick = { viewModel.runActiveFileWebPreview() },
-                            modifier = Modifier.testTag("run_web_preview_button")
+                            modifier = Modifier.testTag("run_web_preview_button").size(40.dp)
                         ) {
                             Icon(
                                 imageVector = Icons.Default.PlayArrow,
@@ -360,18 +348,10 @@ fun EditorScreen(
                             )
                         }
 
-                        // Format code button
-                        IconButton(
-                            onClick = { viewModel.formatCurrentCode() },
-                            modifier = Modifier.testTag("format_code_button")
-                        ) {
-                            Icon(Icons.Default.AutoFixHigh, contentDescription = strings.formatCode)
-                        }
-
                         // Save file button
                         IconButton(
                             onClick = { viewModel.saveActiveFile() },
-                            modifier = Modifier.testTag("save_file_button")
+                            modifier = Modifier.testTag("save_file_button").size(40.dp)
                         ) {
                             Icon(Icons.Default.Save, contentDescription = strings.saveFile)
                         }
@@ -380,7 +360,7 @@ fun EditorScreen(
                         Box {
                             IconButton(
                                 onClick = { topMenuExpanded = true },
-                                modifier = Modifier.testTag("top_menu_overflow")
+                                modifier = Modifier.testTag("top_menu_overflow").size(40.dp)
                             ) {
                                 Icon(Icons.Default.MoreVert, contentDescription = strings.moreOptions)
                             }
@@ -390,6 +370,21 @@ fun EditorScreen(
                                 onDismissRequest = { topMenuExpanded = false },
                                 shape = RoundedCornerShape(20.dp)
                             ) {
+                                DropdownMenuItem(
+                                    text = { Text(strings.formatCode) },
+                                    leadingIcon = {
+                                        Icon(
+                                            Icons.Default.AutoFixHigh,
+                                            contentDescription = null,
+                                            tint = MaterialTheme.colorScheme.primary,
+                                            modifier = Modifier.size(20.dp)
+                                        )
+                                    },
+                                    onClick = {
+                                        topMenuExpanded = false
+                                        viewModel.formatCurrentCode()
+                                    }
+                                )
                                 DropdownMenuItem(
                                     text = { Text(strings.runPreview) },
                                     leadingIcon = { Icon(Icons.Default.PlayArrow, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },

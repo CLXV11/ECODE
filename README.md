@@ -1,219 +1,229 @@
+<div align="center">
+
 # ECODE
 
-> Native Android Code Editor & Mobile IDE engine built with Kotlin and Jetpack Compose.
+**High-Performance Native Android Code Editor & Mobile IDE Engine**
 
-[![Platform](https://img.shields.io/badge/Platform-Android%207.0+%20(API%2024--36)-2C3437?style=flat-square&logo=android&logoColor=3DDC84)](https://developer.android.com)
-[![Language](https://img.shields.io/badge/Language-Kotlin%202.0-2C3437?style=flat-square&logo=kotlin&logoColor=7F52FF)](https://kotlinlang.org)
-[![UI Framework](https://img.shields.io/badge/UI-Jetpack%20Compose%20M3-2C3437?style=flat-square&logo=jetpackcompose&logoColor=4285F4)](https://developer.android.com/jetpack/compose)
-[![CI/CD](https://img.shields.io/badge/CI%2FCD-GitHub%20Actions%20APK%20Pipeline-2C3437?style=flat-square&logo=githubactions&logoColor=2088FF)](.github/workflows/build-apk.yml)
-[![Theme](https://img.shields.io/badge/Display-AMOLED%20Black%20%23000000-2C3437?style=flat-square)](#visual-themes)
-[![License](https://img.shields.io/badge/License-Apache%202.0-2C3437?style=flat-square)](LICENSE)
+[![Build](https://img.shields.io/badge/Build-passing-34A853?style=for-the-badge&logo=github&logoColor=white)](.github/workflows/build-apk.yml)
+[![Kotlin](https://img.shields.io/badge/Kotlin-2.0-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white)](https://kotlinlang.org)
+[![Jetpack Compose](https://img.shields.io/badge/Jetpack%20Compose-BOM%202024.06-4285F4?style=for-the-badge&logo=jetpackcompose&logoColor=white)](https://developer.android.com/jetpack/compose)
+[![API](https://img.shields.io/badge/API-24+-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://developer.android.com)
+[![License](https://img.shields.io/badge/License-Apache%202.0-2196F3?style=for-the-badge)](LICENSE)
+[![Network](https://img.shields.io/badge/Network-Not%20Required-34A853?style=for-the-badge)](#security--offline-architecture)
+
+<br/>
+
+[![Telegram](https://img.shields.io/badge/Telegram-@EPCD11-2AABEE?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/EPCD11)
+[![Discord](https://img.shields.io/badge/Discord-Join%20Server-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/FkssmYFY)
+
+</div>
 
 ---
 
 ## Technical Specifications
 
-| Parameter | Specification |
+| Parameter | Architecture Specification |
 | :--- | :--- |
-| Runtime Environment | Android Runtime (ART), Min SDK 24, Target SDK 36 |
-| Core Language | Kotlin 2.0+ (Strict Type-Safety & Coroutines) |
-| Architecture Pattern | Unidirectional Data Flow (UDF), MVVM, Clean Separation |
-| UI Toolkit | Declarative Jetpack Compose with Material Design 3 |
-| Storage Interface | Android Storage Access Framework (SAF) Documents & Tree Provider |
-| Execution Engine | Local WebKit/WebView runtime with bidirectional JavaScript Bridge |
-| Testing Framework | JVM Unit Tests + Robolectric + KSP |
+| **Runtime Target** | Android 7.0 (Nougat, API 24) through Android 16 (Vanilla Ice Cream / Baklava, API 36) |
+| **Language & Toolchain** | Kotlin 2.0+ / Kotlin Symbol Processing (KSP) / Coroutines Flow |
+| **User Interface** | Modern Jetpack Compose (Material Design 3) with full edge-to-edge support |
+| **Storage Architecture** | Android Storage Access Framework (SAF) Document & Tree Provider |
+| **Rendering Pipeline** | Hardware-accelerated Canvas with dynamic line virtualization and viewport clipping |
+| **Execution Sandbox** | Integrated WebKit WebView runtime with bi-directional JavaScript console bridge |
+| **Local Verification** | Automated JVM Unit Tests, Robolectric Tests, and GitHub Actions CI/CD Pipeline |
 
 ---
 
 ## Community & Direct Developer Channels
 
-Direct links for technical support, feature discussions, and build announcements:
+Join the official developer channels for updates, discussions, bug reports, and direct contact:
 
-| Channel | Identifier | Direct Access |
+| Channel | Handle / Server | Direct Link |
 | :--- | :--- | :--- |
-| Telegram | `@EPCD11` | [t.me/EPCD11](https://t.me/EPCD11) |
-| Discord | Community Server | [discord.gg/FkssmYFY](https://discord.gg/FkssmYFY) |
+| **Telegram Channel** | `@EPCD11` | [t.me/EPCD11](https://t.me/EPCD11) |
+| **Discord Server** | Community Support | [discord.gg/FkssmYFY](https://discord.gg/FkssmYFY) |
 
 ---
 
-## System Architecture
+## Supported Languages & Official Emblems
+
+ECODE features custom vector renderers designed to replicate official language branding:
+
+<div align="center">
+
+[![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white)](https://www.python.org)
+[![Kotlin](https://img.shields.io/badge/Kotlin-7F52FF?style=flat-square&logo=kotlin&logoColor=white)](https://kotlinlang.org)
+[![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org)
+[![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=flat-square&logo=html5&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/HTML)
+[![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=flat-square&logo=css3&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/CSS)
+[![React](https://img.shields.io/badge/React%20JSX%2FTSX-20232A?style=flat-square&logo=react&logoColor=61DAFB)](https://react.dev)
+[![Java](https://img.shields.io/badge/Java-ED8B00?style=flat-square&logo=openjdk&logoColor=white)](https://www.oracle.com/java)
+[![C++](https://img.shields.io/badge/C%2B%2B-00599C?style=flat-square&logo=c%2B%2B&logoColor=white)](https://isocpp.org)
+[![C#](https://img.shields.io/badge/C%23-239120?style=flat-square&logo=csharp&logoColor=white)](https://dotnet.microsoft.com)
+[![Rust](https://img.shields.io/badge/Rust-000000?style=flat-square&logo=rust&logoColor=white)](https://www.rust-lang.org)
+[![Go](https://img.shields.io/badge/Go-00ADD8?style=flat-square&logo=go&logoColor=white)](https://go.dev)
+[![PHP](https://img.shields.io/badge/PHP-777BB4?style=flat-square&logo=php&logoColor=white)](https://www.php.net)
+[![Ruby](https://img.shields.io/badge/Ruby-CC342D?style=flat-square&logo=ruby&logoColor=white)](https://www.ruby-lang.org)
+[![Swift](https://img.shields.io/badge/Swift-FA7343?style=flat-square&logo=swift&logoColor=white)](https://swift.org)
+[![Dart](https://img.shields.io/badge/Dart-0175C2?style=flat-square&logo=dart&logoColor=white)](https://dart.dev)
+[![SQL](https://img.shields.io/badge/SQL-336791?style=flat-square&logo=postgresql&logoColor=white)](https://www.postgresql.org)
+[![Markdown](https://img.shields.io/badge/Markdown-000000?style=flat-square&logo=markdown&logoColor=white)](https://daringfireball.net/projects/markdown/)
+[![JSON](https://img.shields.io/badge/JSON-000000?style=flat-square&logo=json&logoColor=white)](https://www.json.org)
+[![Shell](https://img.shields.io/badge/Shell%2FBash-4EAA25?style=flat-square&logo=gnubash&logoColor=white)](https://www.gnu.org/software/bash/)
+
+</div>
+
+---
+
+## Architectural Blueprint
 
 ```
-[ Android OS / Linux Kernel ]
-       |
-       v
-[ Jetpack Compose UI Layer ]
-  ├── TopAppBar (Session Info, Language Selector Chip, Action Bar)
-  ├── EditorTabBar (Horizontal Scroll, Dirty State Tracker, Tab Manager)
-  ├── CodeEditorView (Canvas Line Numbers, Syntax Highlight Engine, Caret)
-  ├── SearchReplaceBar (Regex Engine, Case-Match, Token Navigator)
-  ├── EditorBottomBar (Undo/Redo, Indentation Controls, Quick Symbol Bar)
-  └── FileExplorerDrawer (SAF SAF-Tree Provider, Recents Cache, Direct Actions)
-       |
-       v
-[ ViewModel & State Management ]
-  ├── EditorViewModel (StateFlow<EditorUiState>, MVI Event Pipeline)
-  ├── AutoSaveManager (Debounced Background I/O Coroutine)
-  └── ShortcutRegistry (Physical Keyboard KeyEvent Dispatcher)
-       |
-       v
-[ Engine & Business Logic Core ]
-  ├── Lexer & Tokenizer (Multi-language Regex Matcher, Span Formatter)
-  ├── WebRunnerContentBuilder (Payload Compiler, Script Injector)
-  ├── SafStorageManager (Scoped Storage URIs, MIME Resolver)
-  └── WebConsoleBridge (Bidirectional JavaScript Interface, Log Dispatcher)
++--------------------------------------------------------------------------+
+|                        Android 7.0 - 16 Runtime                          |
++--------------------------------------------------------------------------+
+                                    |
+                                    v
++--------------------------------------------------------------------------+
+|                       Jetpack Compose UI (M3)                            |
+|                                                                          |
+|   +------------------------------------------------------------------+   |
+|   |  TopAppBar: Active Language Pill / Run / Save / Overflow Menu    |   |
+|   +------------------------------------------------------------------+   |
+|   |  EditorTabBar: Dirty Tracking / Scrollable Multi-Tab Container   |   |
+|   +------------------------------------------------------------------+   |
+|   |  CodeEditorView: Canvas Line Numbers / Syntax Spans / Selection  |   |
+|   +------------------------------------------------------------------+   |
+|   |  SearchReplaceBar: Regex / Case-Sensitive / Token Matcher        |   |
+|   +------------------------------------------------------------------+   |
+|   |  EditorBottomBar: Undo / Redo / Indent / Tab / Quick Symbols Bar |   |
+|   +------------------------------------------------------------------+   |
+|   |  EditorStatusBar: Line & Column / Storage State / Auto-Save      |   |
+|   +------------------------------------------------------------------+   |
+|   |  FileExplorerDrawer: Scoped SAF Trees / Internal Workspace       |   |
++--------------------------------------------------------------------------+
+                                    |
+                                    v
++--------------------------------------------------------------------------+
+|                     State Management & ViewModels                        |
+|                                                                          |
+|   - EditorViewModel (StateFlow<EditorUiState>, Intent Dispatchers)       |
+|   - AutoSaveManager (Debounced Coroutine File I/O Engine)               |
+|   - PhysicalKeyManager (Hardware Keyboard Shortcut Routing)              |
++--------------------------------------------------------------------------+
+                                    |
+                                    v
++--------------------------------------------------------------------------+
+|                        Engine Core & Services                            |
+|                                                                          |
+|   - MultiLanguageLexer (High-Speed Regex Tokenizer & Span Assembler)     |
+|   - WebRunnerContentBuilder (HTML/CSS/JS Sandbox Payload Compiler)       |
+|   - SafStorageManager (Document Trees, MIME Detection, Encoding)         |
+|   - WebConsoleBridge (Two-Way JavaScript Log & REPL Evaluator)           |
++--------------------------------------------------------------------------+
 ```
 
 ---
 
 ## Functional Capabilities
 
-### Editor Core
-- Lexical syntax highlighter covering more than 16 languages and data formats.
-- Canvas-rendered line number gutter synchronized with vertical scroll offsets.
-- Automatic bracket pairing, delimiter completion, and smart indentation logic.
-- Undo/Redo stack with snapshot compaction and zero memory leak retention.
-- Regex-powered Find and Replace supporting case sensitivity and whole-word toggles.
+### 1. Code Editor Engine
+- Syntax tokenization covering programming languages, config files, and markup.
+- Synchronized line numbering rendered on Canvas with zero scroll friction.
+- Delimiter pairing for brackets, braces, parentheses, and quote wrappers.
+- State-preserving Undo/Redo historical buffer stack.
+- Regex Find & Replace with case sensitivity, whole-word matching, and occurrence counters.
 
-### Web Runner & Runtime Sandbox
-- Integrated live preview for HTML, CSS, JavaScript, SVG, Markdown, and JSON.
-- Two-way bridge intercepting `console.log`, `console.warn`, and `console.error`.
-- Interactive REPL input bar for real-time JavaScript code evaluation.
-- Responsive viewport toggles: Fullscreen, Desktop, Tablet, and Mobile frames.
+### 2. Live Web Runner & Console REPL
+- Zero-latency sandbox execution for HTML, CSS, JavaScript, SVG, and Markdown.
+- Two-way bridge intercepting `console.log`, `console.info`, `console.warn`, and `console.error`.
+- Interactive REPL terminal input bar for real-time JavaScript statement evaluation.
+- Responsive preview viewports: Fullscreen, Desktop (1280px), Tablet (768px), and Mobile (375px).
 
-### Storage & Android Scoped Storage Access
-- Full compliance with Android Storage Access Framework (SAF).
-- Native support for opening individual documents (`ACTION_OPEN_DOCUMENT`) and entire directory trees (`ACTION_OPEN_DOCUMENT_TREE`).
-- Automatic background file saving with configurable debounce intervals (5s, 10s, 30s, 60s).
-- Encoding detector with UTF-8, UTF-8 BOM, UTF-16, and ASCII identification.
+### 3. Native Storage Access Framework (SAF)
+- Full compliance with Android Scoped Storage policies (zero broad storage permissions).
+- Open single documents (`ACTION_OPEN_DOCUMENT`) and complete directory trees (`ACTION_OPEN_DOCUMENT_TREE`).
+- Background auto-save with configurable debounce intervals (5s, 10s, 30s, 60s).
+- Encoding detection supporting UTF-8, UTF-8 with BOM, UTF-16, and ASCII.
 
----
-
-## Supported Languages & Formats
-
-```
-[Web & Markup]       HTML (.html, .htm), CSS (.css), SCSS (.scss), Markdown (.md), SVG (.svg)
-[Scripting]          JavaScript (.js, .mjs), TypeScript (.ts, .tsx), Python (.py)
-[Systems & JVM]      Kotlin (.kt, .kts), Java (.java), C (.c, .h), C++ (.cpp, .hpp), Rust (.rs), Go (.go)
-[Query & Config]     SQL (.sql), JSON (.json), XML (.xml), YAML (.yaml, .yml), Shell (.sh, .bash)
-```
+### 4. Visual Themes & True AMOLED Pitch Black
+- Pure AMOLED mode (`#000000`) for zero battery draw on OLED/AMOLED pixels.
+- Monokai Dark (`#272822`) with pastel syntax accents.
+- One Dark Pro (`#21252B`) with balanced typography.
+- Dracula Night (`#282A36`) with high-chroma violet accents.
+- GitHub Light (`#FFFFFF`) for high ambient daylight readability.
 
 ---
 
-## Visual Themes
+## Hardware Keyboard Shortcuts
 
-| Identifier | Background | Foreground | Target Use |
-| :--- | :--- | :--- | :--- |
-| `AMOLED` | `#000000` | `#E6EDF3` | Battery optimization on OLED displays, pitch black contrast |
-| `Monokai` | `#272822` | `#F8F8F2` | Classic high-contrast syntax palette |
-| `One Dark Pro` | `#21252B` | `#ABB2BF` | Low-strain dark neutral palette |
-| `Dracula` | `#282A36` | `#F8F8F2` | High-chroma violet and pastel accents |
-| `GitHub Light` | `#FFFFFF` | `#24292F` | High ambient daylight reading |
-
----
-
-## Hardware Keyboard Bindings
-
-| Shortcut | Target Command |
+| Combination | Target Action |
 | :--- | :--- |
-| `Ctrl + S` | Persist active file to disk / SAF provider |
+| `Ctrl + S` | Save active file to storage |
 | `Ctrl + F` | Toggle Find bar |
 | `Ctrl + H` | Toggle Find and Replace bar |
 | `Ctrl + G` | Open line jump dialog |
-| `Ctrl + W` | Terminate active tab session |
-| `Ctrl + R` | Dispatch code to Web Runner runtime |
-| `Ctrl + Z` | Revert last buffer modification |
-| `Ctrl + Y` | Reapply reverted buffer modification |
-| `Ctrl + ,` | Invoke configuration dialog |
+| `Ctrl + W` | Close current tab session |
+| `Ctrl + R` | Execute code in Web Runner |
+| `Ctrl + Z` | Undo last edit |
+| `Ctrl + Y` | Redo last reverted edit |
+| `Ctrl + ,` | Open Settings dialog |
 
 ---
 
-## Automated CI/CD Pipeline (GitHub Actions)
+## GitHub Actions Automated APK Pipeline
 
-A reproducible, containerized build workflow is configured under `.github/workflows/build-apk.yml`.
+A containerized, reproducible build workflow is implemented at `.github/workflows/build-apk.yml`.
 
-### Pipeline Triggers
-1. **Push & Pull Requests**: Triggers on `main` and `master` branches.
-2. **Tag Deployments**: Push tags matching `v*` to automatically generate GitHub Releases.
-3. **Manual Dispatch**: Triggered from the Actions tab with configurable build parameters:
-   - Variant selection: `debug`, `release`, or `both`.
-   - Unit test toggle: execute or bypass test suites.
-   - Release creation: direct publishing toggle.
-
-### Artifact Outputs
-- Location: GitHub Actions Run Summary -> `Artifacts` -> `ECODE-Android-APK`.
-- Files:
-  - `ECODE-debug.apk`
-  - `ECODE-release.apk` (if release variant enabled)
-  - `SHA256SUMS.txt` (cryptographic integrity verification)
+### Pipeline Features
+1. **Automated Triggers**: Runs on all `push` and `pull_request` events to `main` and `master`.
+2. **Version Tagging**: Pushing a tag (`git tag v1.0.0`) automatically compiles and publishes a **GitHub Release** with APK binaries attached.
+3. **Manual Execution**: Dispatched manually from the **Actions** tab with configurable options:
+   - Variant: `debug`, `release`, or `both`.
+   - Unit tests: toggle test suite execution before packaging.
+   - Release creation: direct release drafting toggle.
+4. **Artifact Retention**: Automatically uploads `ECODE-debug.apk` and `SHA256SUMS.txt` with a 14-day retention window.
 
 ---
 
-## Local Build Instructions
+## Local Build & Installation
 
-### Prerequisites
+### Requirements
 - JDK 21 (Temurin, OpenJDK, or Zulu)
 - Android SDK with Platform 36 and Build-Tools 36.0.0
-- Linux, macOS, or Windows terminal
+- Bash terminal (Linux, macOS, or WSL on Windows)
 
-### Commands
+### Compilation Commands
 
 ```bash
 # 1. Clone repository
 git clone https://github.com/amialhnina/ECODE.git
 cd ECODE
 
-# 2. Grant executable permissions to wrapper
+# 2. Grant executable permissions to Gradle wrapper
 chmod +x gradlew
 
-# 3. Execute JVM unit and Robolectric test suites
+# 3. Execute unit and Robolectric tests
 ./gradlew :app:testDebugUnitTest
 
-# 4. Compile debug APK
+# 4. Assemble debug APK
 ./gradlew :app:assembleDebug
 
-# 5. Output location
+# 5. Output binary path:
 # app/build/outputs/apk/debug/app-debug.apk
 ```
 
 ---
 
-## Project Structure
+## Security & Offline Architecture
 
-```
-ECODE/
-├── .github/
-│   └── workflows/
-│       └── build-apk.yml            # CI/CD APK build and release pipeline
-├── app/
-│   ├── build.gradle.kts             # Module configuration, dependencies, and APK naming
-│   └── src/
-│       ├── main/
-│       │   ├── AndroidManifest.xml  # Hardware declarations and permissions
-│       │   ├── java/com/example/
-│       │   │   ├── MainActivity.kt   # System window insets & entry point
-│       │   │   └── editor/
-│       │   │       ├── engine/       # Lexical analysis and line gutter calculations
-│       │   │       ├── io/           # SAF documents, trees, encoding detectors
-│       │   │       ├── runner/       # WebView container, bridge, console REPL
-│       │   │       ├── settings/     # Preference Datastore, i18n, themes
-│       │   │       ├── shortcuts/    # Hardware key event mapping
-│       │   │       ├── syntax/       # Language tokens and grammar rules
-│       │   │       └── ui/           # Jetpack Compose screens, dialogs, components
-│       │   └── res/
-│       │       ├── drawable/         # Vector assets (Telegram, Discord, GitHub)
-│       │       └── values/           # Theme resources and string catalogs
-│       └── test/                     # Robolectric and JVM unit tests
-├── gradle/
-│   └── wrapper/                     # Gradle wrapper definitions
-├── gradlew                          # Unix build script
-├── gradlew.bat                      # Windows build script
-├── settings.gradle.kts              # Project structure definitions
-└── README.md                        # Documentation
-```
+- **No Remote Tracking**: Zero analytics SDKs, trackers, or telemetries.
+- **Local Isolation**: All files, projects, and editor buffers remain completely on the local device.
+- **Least Privilege**: Only the bare minimum Android system permissions are requested.
+- **Offline Reliability**: Fully functional without requiring an active internet connection.
 
 ---
 
 ## License
 
-This software is released under the **Apache License 2.0**. Refer to the [LICENSE](LICENSE) file for terms and conditions.
+This project is licensed under the **Apache License 2.0**. Full terms and conditions are available in the [LICENSE](LICENSE) file.

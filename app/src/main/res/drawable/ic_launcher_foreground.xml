@@ -4,21 +4,31 @@
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
+    <!-- Elevated subtle plate -->
     <path
-        android:pathData="M 38,34 L 20,54 L 38,74"
-        android:strokeColor="#FF000000"
-        android:strokeWidth="11"
+        android:fillColor="#161B22"
+        android:strokeColor="#262C36"
+        android:strokeWidth="1"
+        android:pathData="M42,26 h24 a16,16 0 0,1 16,16 v24 a16,16 0 0,1 -16,16 h-24 a16,16 0 0,1 -16,-16 v-24 a16,16 0 0,1 16,-16 z" />
+
+    <!-- ECODE Monogram: Chevron bracket fused with E -->
+    <path
+        android:pathData="M69.5,38 L48.5,38 L37.5,54 L48.5,70 L69.5,70"
+        android:strokeColor="#F0F4F8"
+        android:strokeWidth="5.5"
         android:strokeLineCap="round"
-        android:strokeLineJoin="round" />
+        android:strokeLineJoin="round"
+        android:strokeMiterLimit="4" />
+
+    <!-- ECODE Middle Command Bar -->
     <path
-        android:pathData="M 64,28 L 44,80"
-        android:strokeColor="#FF000000"
-        android:strokeWidth="11"
+        android:pathData="M45.5,54 L61.5,54"
+        android:strokeColor="#F0F4F8"
+        android:strokeWidth="5.5"
         android:strokeLineCap="round" />
+
+    <!-- Terminal Cursor -->
     <path
-        android:pathData="M 70,34 L 88,54 L 70,74"
-        android:strokeColor="#FF000000"
-        android:strokeWidth="11"
-        android:strokeLineCap="round"
-        android:strokeLineJoin="round" />
+        android:fillColor="#F0F4F8"
+        android:pathData="M66.5,51.5 h5 v5 h-5 z" />
 </vector>

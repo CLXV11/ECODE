@@ -28,10 +28,10 @@ object LanguageVectorDrawers {
 
             // Official JetBrains Kotlin rounded square
             val badge = Path().apply {
-                addRoundRect(RoundRect(0f, 0f, w, h, CornerRadius(w * 0.18f)))
+                addRoundRect(RoundRect(0f, 0f, w, h, CornerRadius(w * 0.20f)))
             }
             clipPath(badge) {
-                // Upper diagonal shape (JetBrains Purple)
+                // Top-Left Triangle (JetBrains Purple #7F52FF)
                 val p1 = Path().apply {
                     moveTo(0f, 0f)
                     lineTo(w, 0f)
@@ -40,29 +40,28 @@ object LanguageVectorDrawers {
                 }
                 drawPath(p1, Color(0xFF7F52FF))
 
-                // Middle accent ribbon (JetBrains Pink / Violet)
-                val p2 = Path().apply {
-                    moveTo(w * 0.50f, 0f)
-                    lineTo(w, w * 0.50f)
-                    lineTo(w * 0.50f, h)
-                    lineTo(0f, h * 0.50f)
-                    close()
-                }
-                drawPath(p2, Color(0xFFC757BC))
-
-                // Lower right corner triangle (JetBrains Orange)
-                val p3 = Path().apply {
+                // Bottom-Right Triangle base (JetBrains Magenta/Pink #E4485D)
+                val pOrange = Path().apply {
                     moveTo(w, 0f)
                     lineTo(w, h)
-                    lineTo(w * 0.35f, h)
+                    lineTo(0f, h)
                     close()
                 }
-                drawPath(p3, Color(0xFFFF7D00))
+                drawPath(pOrange, Color(0xFFE4485D))
 
-                // Lower left wedge (JetBrains Cyan / Blue)
+                // Lower right corner triangle (JetBrains Orange #FF8900)
+                val p3 = Path().apply {
+                    moveTo(w * 0.35f, h)
+                    lineTo(w, h * 0.35f)
+                    lineTo(w, h)
+                    close()
+                }
+                drawPath(p3, Color(0xFFFF8900))
+
+                // Lower left wedge (JetBrains Blue #0095D5)
                 val p4 = Path().apply {
-                    moveTo(0f, h * 0.45f)
-                    lineTo(w * 0.55f, h)
+                    moveTo(0f, h * 0.48f)
+                    lineTo(w * 0.52f, h)
                     lineTo(0f, h)
                     close()
                 }
@@ -77,7 +76,6 @@ object LanguageVectorDrawers {
             val h = size
 
             // Authentic official Python logo geometry
-            // A single snake half composed of head, upper bend, and tail
             val snakeHalf = Path().apply {
                 moveTo(w * 0.495f, h * 0.05f)
                 cubicTo(w * 0.23f, h * 0.05f, w * 0.24f, h * 0.16f, w * 0.24f, h * 0.16f)
@@ -97,15 +95,15 @@ object LanguageVectorDrawers {
                 close()
             }
 
-            // Upper Blue Snake
-            drawPath(snakeHalf, color = Color(0xFF387EB8))
-            // Blue Snake White Eye
-            drawCircle(Color.White, radius = w * 0.038f, center = Offset(w * 0.34f, h * 0.15f))
+            // Upper Official Python Blue Snake (#3776AB)
+            drawPath(snakeHalf, color = Color(0xFF3776AB))
+            // Blue Snake White Eye with clear resolution
+            drawCircle(Color.White, radius = w * 0.052f, center = Offset(w * 0.34f, h * 0.16f))
 
-            // Lower Yellow Snake (official 180° rotation of the same snake half)
+            // Lower Official Python Gold Snake (#FFD43B) (official 180° rotation)
             rotate(180f, pivot = Offset(w * 0.5f, h * 0.5f)) {
                 drawPath(snakeHalf, color = Color(0xFFFFD43B))
-                drawCircle(Color.White, radius = w * 0.038f, center = Offset(w * 0.34f, h * 0.15f))
+                drawCircle(Color.White, radius = w * 0.052f, center = Offset(w * 0.34f, h * 0.16f))
             }
         }
     }
@@ -246,29 +244,29 @@ object LanguageVectorDrawers {
         with(scope) {
             val w = size
             val h = size
-            // Official JavaScript Yellow badge with crisp black JS lettering
+            // Official JavaScript Yellow badge with crisp black JS lettering in bottom-right
             drawRoundRect(
                 color = Color(0xFFF7DF1E),
                 size = Size(w, h),
-                cornerRadius = CornerRadius(w * 0.18f)
+                cornerRadius = CornerRadius(w * 0.16f)
             )
 
-            val stroke = Stroke(width = w * 0.09f, cap = StrokeCap.Round, join = StrokeJoin.Round)
+            val stroke = Stroke(width = w * 0.088f, cap = StrokeCap.Square, join = StrokeJoin.Miter)
 
-            // Crisp black "J"
+            // Crisp black "J" in lower-right
             val jPath = Path().apply {
-                moveTo(w * 0.38f, h * 0.36f)
-                lineTo(w * 0.38f, h * 0.68f)
-                cubicTo(w * 0.38f, h * 0.80f, w * 0.22f, h * 0.80f, w * 0.22f, h * 0.70f)
+                moveTo(w * 0.44f, h * 0.42f)
+                lineTo(w * 0.44f, h * 0.74f)
+                cubicTo(w * 0.44f, h * 0.85f, w * 0.28f, h * 0.85f, w * 0.26f, h * 0.76f)
             }
             drawPath(jPath, color = Color.Black, style = stroke)
 
-            // Crisp black "S"
+            // Crisp black "S" in lower-right
             val sPath = Path().apply {
-                moveTo(w * 0.76f, h * 0.44f)
-                cubicTo(w * 0.72f, h * 0.36f, w * 0.54f, h * 0.36f, w * 0.54f, h * 0.50f)
-                cubicTo(w * 0.54f, h * 0.62f, w * 0.76f, h * 0.58f, w * 0.76f, h * 0.70f)
-                cubicTo(w * 0.76f, h * 0.82f, w * 0.54f, h * 0.82f, w * 0.50f, h * 0.74f)
+                moveTo(w * 0.82f, h * 0.50f)
+                cubicTo(w * 0.78f, h * 0.42f, w * 0.56f, h * 0.42f, w * 0.56f, h * 0.54f)
+                cubicTo(w * 0.56f, h * 0.65f, w * 0.82f, h * 0.62f, w * 0.82f, h * 0.73f)
+                cubicTo(w * 0.82f, h * 0.85f, w * 0.56f, h * 0.85f, w * 0.52f, h * 0.78f)
             }
             drawPath(sPath, color = Color.Black, style = stroke)
         }
@@ -278,25 +276,25 @@ object LanguageVectorDrawers {
         with(scope) {
             val w = size
             val h = size
-            // Official TypeScript Blue badge
+            // Official TypeScript Blue badge with crisp white TS lettering in bottom-right
             drawRoundRect(
                 color = Color(0xFF3178C6),
                 size = Size(w, h),
-                cornerRadius = CornerRadius(w * 0.18f)
+                cornerRadius = CornerRadius(w * 0.16f)
             )
 
-            val stroke = Stroke(width = w * 0.085f, cap = StrokeCap.Round, join = StrokeJoin.Round)
+            val stroke = Stroke(width = w * 0.085f, cap = StrokeCap.Square, join = StrokeJoin.Miter)
 
             // Crisp White "T"
-            drawLine(Color.White, Offset(w * 0.18f, h * 0.38f), Offset(w * 0.46f, h * 0.38f), stroke.width)
-            drawLine(Color.White, Offset(w * 0.32f, h * 0.38f), Offset(w * 0.32f, h * 0.76f), stroke.width)
+            drawLine(Color.White, Offset(w * 0.22f, h * 0.44f), Offset(w * 0.52f, h * 0.44f), stroke.width)
+            drawLine(Color.White, Offset(w * 0.37f, h * 0.44f), Offset(w * 0.37f, h * 0.82f), stroke.width)
 
             // Crisp White "S"
             val sPath = Path().apply {
-                moveTo(w * 0.76f, h * 0.44f)
-                cubicTo(w * 0.72f, h * 0.36f, w * 0.54f, h * 0.36f, w * 0.54f, h * 0.50f)
-                cubicTo(w * 0.54f, h * 0.62f, w * 0.76f, h * 0.58f, w * 0.76f, h * 0.70f)
-                cubicTo(w * 0.76f, h * 0.82f, w * 0.54f, h * 0.82f, w * 0.50f, h * 0.74f)
+                moveTo(w * 0.82f, h * 0.50f)
+                cubicTo(w * 0.78f, h * 0.42f, w * 0.56f, h * 0.42f, w * 0.56f, h * 0.54f)
+                cubicTo(w * 0.56f, h * 0.65f, w * 0.82f, h * 0.62f, w * 0.82f, h * 0.73f)
+                cubicTo(w * 0.82f, h * 0.85f, w * 0.56f, h * 0.85f, w * 0.52f, h * 0.78f)
             }
             drawPath(sPath, color = Color.White, style = stroke)
         }
