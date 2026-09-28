@@ -119,8 +119,18 @@ object WebRunnerContentBuilder {
     }
 
     fun isWebRunnable(fileName: String, languageId: String? = null): Boolean {
-        // Every file in CodeXCroc has an interactive preview & runner
-        return true
+        val ext = fileName.substringAfterLast('.', "").lowercase()
+        return when {
+            ext in listOf(
+                "html", "htm", "css", "scss", "sass", "less",
+                "js", "mjs", "cjs", "jsx", "ts", "tsx",
+                "py", "pyw", "python",
+                "kt", "kts", "kotlin",
+                "sql", "svg", "md", "markdown", "json"
+            ) -> true
+            languageId in listOf("html", "css", "javascript", "typescript", "python", "kotlin", "sql", "markdown", "json") -> true
+            else -> false
+        }
     }
 
     fun buildPayload(
@@ -136,17 +146,48 @@ object WebRunnerContentBuilder {
             null
         }
 
-        val html = when (fileType) {
-            WebFileType.HTML -> buildHtmlDocument(rawContent, openTabs)
-            WebFileType.CSS -> buildCssShowcaseDocument(title, rawContent)
-            WebFileType.JAVASCRIPT -> buildJsRunnerDocument(title, rawContent)
-            WebFileType.PYTHON -> buildPythonRunnerDocument(title, rawContent)
-            WebFileType.KOTLIN -> buildKotlinRunnerDocument(title, rawContent)
-            WebFileType.MARKDOWN -> buildMarkdownPreviewDocument(title, rawContent)
-            WebFileType.JSON -> buildJsonInspectorDocument(title, rawContent)
-            WebFileType.SVG -> buildSvgPreviewDocument(title, rawContent)
-            WebFileType.SQL -> buildSqlRunnerDocument(title, rawContent)
-            WebFileType.CODE, WebFileType.UNKNOWN -> buildCodeRunnerDocument(title, rawContent)
+        val analysis = ProgramTypeDetector.analyze(
+            fileName = title,
+            languageId = fileType.name.lowercase(),
+            content = rawContent
+        )
+
+        val html = when (analysis.rendererType) {
+            PreviewRendererType.CAPABILITY_NOTICE_RENDERER -> {
+                buildCapabilityNoticeDocument(title, rawContent, fileType, analysis)
+            }
+            PreviewRendererType.CANVAS_RENDERER -> {
+                when (analysis.programType) {
+                    ProgramType.PYTHON_TURTLE_GRAPHICS -> buildPythonTurtleDocument(title, rawContent)
+                    ProgramType.PYTHON_CANVAS_PYGAME -> buildPythonPygameDocument(title, rawContent)
+                    else -> buildCapabilityNoticeDocument(title, rawContent, fileType, analysis)
+                }
+            }
+            PreviewRendererType.STRUCTURED_DATA_RENDERER -> {
+                when (analysis.programType) {
+                    ProgramType.STRUCTURED_DATA_JSON -> buildJsonInspectorDocument(title, rawContent)
+                    ProgramType.STRUCTURED_DATA_XML -> buildXmlInspectorDocument(title, rawContent)
+                    else -> buildJsonInspectorDocument(title, rawContent)
+                }
+            }
+            PreviewRendererType.WEB_RENDERER -> {
+                when (analysis.programType) {
+                    ProgramType.HTML_DOCUMENT -> buildHtmlDocument(rawContent, openTabs)
+                    ProgramType.CSS_STYLESHEET -> buildCssShowcaseDocument(title, rawContent)
+                    ProgramType.WEB_DOM_SCRIPT -> buildWebDomJsDocument(title, rawContent)
+                    ProgramType.PYTHON_FLASK_FASTAPI -> buildPythonWebServerDocument(title, rawContent, analysis.detectedFramework ?: "Web Server")
+                    else -> {
+                        when (fileType) {
+                            WebFileType.HTML -> buildHtmlDocument(rawContent, openTabs)
+                            WebFileType.CSS -> buildCssShowcaseDocument(title, rawContent)
+                            WebFileType.MARKDOWN -> buildMarkdownPreviewDocument(title, rawContent)
+                            WebFileType.SVG -> buildSvgPreviewDocument(title, rawContent)
+                            WebFileType.SQL -> buildSqlRunnerDocument(title, rawContent)
+                            else -> buildCapabilityNoticeDocument(title, rawContent, fileType, analysis)
+                        }
+                    }
+                }
+            }
         }
 
         return WebRunnerPayload(
@@ -154,7 +195,8 @@ object WebRunnerContentBuilder {
             fileType = fileType,
             htmlToLoad = html,
             baseUrl = baseUrl,
-            originalFilePath = fileDir?.let { File(it, title).absolutePath }
+            originalFilePath = fileDir?.let { File(it, title).absolutePath },
+            analysisResult = analysis
         )
     }
 
@@ -453,7 +495,7 @@ object WebRunnerContentBuilder {
             <span class="py-badge">Python 3.12</span>
             <div>
                 <div style="font-weight: 700; font-size: 14px;">$fileName</div>
-                <div style="font-size: 11px; color: #9ca3af;">CodeXCroc Multi-Language Virtual Runtime</div>
+                <div style="font-size: 11px; color: #9ca3af;">ECODE Multi-Language Virtual Runtime</div>
             </div>
         </div>
         <span id="statusBadge" class="status-pill">Executing...</span>
@@ -713,7 +755,7 @@ object WebRunnerContentBuilder {
             <span class="kt-badge">Kotlin 2.0</span>
             <div>
                 <div style="font-weight: 700; font-size: 14px;">$fileName</div>
-                <div style="font-size: 11px; color: #9ca3af;">CodeXCroc Multi-Language Virtual Runtime</div>
+                <div style="font-size: 11px; color: #9ca3af;">ECODE Multi-Language Virtual Runtime</div>
             </div>
         </div>
         <span id="statusBadge" class="status-pill">Executing...</span>
@@ -1113,9 +1155,9 @@ object WebRunnerContentBuilder {
     <div class="terminal">
         <div class="term-bar"><div class="term-dot"></div>Terminal Simulation &bull; Build Pipeline</div>
         <div class="term-body">
-[CodeXCroc Toolchain] Compiling $fileName...<br>
-[CodeXCroc Toolchain] 0 errors, 0 warnings.<br>
-[CodeXCroc Toolchain] Program exit status: 0 (Success).
+[ECODE Toolchain] Compiling $fileName...<br>
+[ECODE Toolchain] 0 errors, 0 warnings.<br>
+[ECODE Toolchain] Program exit status: 0 (Success).
         </div>
     </div>
 
@@ -1156,5 +1198,1047 @@ object WebRunnerContentBuilder {
 </body>
 </html>
 """
+    }
+
+    private fun buildCapabilityNoticeDocument(
+        fileName: String,
+        codeContent: String,
+        fileType: WebFileType,
+        analysis: ProgramAnalysisResult
+    ): String {
+        val rawEscaped = escapeHtml(codeContent)
+        val ext = fileName.substringAfterLast('.', "").uppercase()
+        val badge = analysis.detectedFramework ?: analysis.programType.displayName
+        val isPython = fileType == WebFileType.PYTHON || ext in listOf("PY", "PYW")
+        val isKotlin = fileType == WebFileType.KOTLIN || ext in listOf("KT", "KTS")
+        val isJs = fileType == WebFileType.JAVASCRIPT || ext in listOf("JS", "TS", "MJS")
+
+        val runnerEngineScript = when {
+            isPython -> PythonInterpreterJs.getScript()
+            isKotlin -> KotlinInterpreterJs.getScript()
+            else -> ""
+        }
+
+        val backgroundScript = when {
+            isPython -> """
+                function executeCli() {
+                    var src = document.getElementById('rawCodeStorage').textContent;
+                    if (window.PythonEngine && window.PythonEngine.run) {
+                        window.PythonEngine.run(
+                            src,
+                            function(out) {
+                                if (window.CLXV11_Bridge && window.CLXV11_Bridge.postMessage) {
+                                    window.CLXV11_Bridge.postMessage('LOG', out, '$fileName', 0, 0, '');
+                                }
+                            },
+                            function(p) { return Promise.resolve(""); },
+                            function() {
+                                if (window.CLXV11_Bridge && window.CLXV11_Bridge.postMessage) {
+                                    window.CLXV11_Bridge.postMessage('INFO', 'Process finished with exit code 0', '$fileName', 0, 0, '');
+                                }
+                            },
+                            function(err) {
+                                if (window.CLXV11_Bridge && window.CLXV11_Bridge.postMessage) {
+                                    window.CLXV11_Bridge.postMessage('ERROR', String(err), '$fileName', 0, 0, '');
+                                }
+                            }
+                        );
+                    }
+                }
+            """
+            isKotlin -> """
+                function executeCli() {
+                    var src = document.getElementById('rawCodeStorage').textContent;
+                    if (window.KotlinEngine && window.KotlinEngine.run) {
+                        window.KotlinEngine.run(
+                            src,
+                            function(out) {
+                                if (window.CLXV11_Bridge && window.CLXV11_Bridge.postMessage) {
+                                    window.CLXV11_Bridge.postMessage('LOG', out, '$fileName', 0, 0, '');
+                                }
+                            },
+                            function(p) { return Promise.resolve(""); },
+                            function() {
+                                if (window.CLXV11_Bridge && window.CLXV11_Bridge.postMessage) {
+                                    window.CLXV11_Bridge.postMessage('INFO', 'Process finished with exit code 0', '$fileName', 0, 0, '');
+                                }
+                            },
+                            function(err) {
+                                if (window.CLXV11_Bridge && window.CLXV11_Bridge.postMessage) {
+                                    window.CLXV11_Bridge.postMessage('ERROR', String(err), '$fileName', 0, 0, '');
+                                }
+                            }
+                        );
+                    }
+                }
+            """
+            isJs -> {
+                val escapedJs = escapeJs(codeContent)
+                """
+                function executeCli() {
+                    try {
+                        var res = eval("$escapedJs");
+                        if (res !== undefined && window.CLXV11_Bridge) {
+                            window.CLXV11_Bridge.postMessage('RESULT', String(res), '$fileName', 0, 0, '');
+                        }
+                    } catch(e) {
+                        if (window.CLXV11_Bridge) {
+                            window.CLXV11_Bridge.postMessage('ERROR', e.name + ': ' + e.message, '$fileName', 0, 0, '');
+                        }
+                    }
+                }
+                """
+            }
+            else -> """
+                function executeCli() {
+                    if (window.CLXV11_Bridge && window.CLXV11_Bridge.postMessage) {
+                        window.CLXV11_Bridge.postMessage('INFO', 'Compiled and running $fileName ($ext)...', '$fileName', 0, 0, '');
+                        window.CLXV11_Bridge.postMessage('INFO', 'Process finished with exit code 0', '$fileName', 0, 0, '');
+                    }
+                }
+            """
+        }
+
+        return """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>$fileName - Capability Notice</title>
+    $CONSOLE_BRIDGE_SCRIPT
+    $runnerEngineScript
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --surface-color: #111827;
+            --border-color: #1f2937;
+            --accent-color: #38bdf8;
+            --text-color: #f3f4f6;
+            --muted-color: #9ca3af;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: var(--bg-color);
+            color: var(--text-color);
+            padding: 24px 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 85vh;
+        }
+        .notice-card {
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 28px 22px;
+            max-width: 480px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        }
+        .icon-bubble {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: rgba(56, 189, 248, 0.12);
+            color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            margin: 0 auto 16px auto;
+            border: 1px solid rgba(56, 189, 248, 0.25);
+        }
+        .badge {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 20px;
+            background: #1e293b;
+            color: #94a3b8;
+            margin-bottom: 12px;
+            border: 1px solid #334155;
+            letter-spacing: 0.5px;
+        }
+        .title {
+            font-size: 17px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #f8fafc;
+        }
+        .desc-en {
+            font-size: 13.5px;
+            line-height: 1.5;
+            color: #e2e8f0;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        .desc-ar {
+            font-size: 13px;
+            line-height: 1.6;
+            color: #94a3b8;
+            margin-bottom: 20px;
+            direction: rtl;
+        }
+        .meta-box {
+            background: #030712;
+            border: 1px solid #1f2937;
+            border-radius: 10px;
+            padding: 12px 14px;
+            font-family: monospace;
+            font-size: 11.5px;
+            color: #93c5fd;
+            text-align: left;
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .meta-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+        }
+        .meta-label {
+            color: #64748b;
+        }
+        .meta-val {
+            color: #38bdf8;
+            font-weight: 600;
+        }
+        .btn-console {
+            background: #0284c7;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-size: 13.5px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: background 0.2s, transform 0.1s;
+        }
+        .btn-console:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+<body onload="executeCli()">
+    <div class="notice-card">
+        <div class="icon-bubble">ℹ️</div>
+        <div class="badge">$badge</div>
+        <h2 class="title">Visual Preview Unavailable</h2>
+        <p class="desc-en">${analysis.explanationEn}</p>
+        <p class="desc-ar">${analysis.explanationAr}</p>
+        <div class="meta-box">
+            <div class="meta-row"><span class="meta-label">File:</span> <span class="meta-val">$fileName</span></div>
+            <div class="meta-row"><span class="meta-label">Program Type:</span> <span class="meta-val">${analysis.programType.displayName}</span></div>
+            <div class="meta-row"><span class="meta-label">Output Target:</span> <span class="meta-val">Console Terminal</span></div>
+        </div>
+        <button class="btn-console" onclick="openConsole()">
+            <span>Open Console / عرض الطرفية</span>
+            <span>❯</span>
+        </button>
+    </div>
+
+    <div id="rawCodeStorage" style="display:none;">$rawEscaped</div>
+
+    <script>
+        function openConsole() {
+            if (window.CLXV11_Bridge && window.CLXV11_Bridge.switchTab) {
+                window.CLXV11_Bridge.switchTab('CONSOLE');
+            }
+        }
+        $backgroundScript
+    </script>
+</body>
+</html>
+        """.trimIndent()
+    }
+
+    private fun buildPythonTurtleDocument(fileName: String, pyCode: String): String {
+        val rawEscaped = escapeHtml(pyCode)
+        return """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Turtle Graphics - $fileName</title>
+    $CONSOLE_BRIDGE_SCRIPT
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --surface-color: #111827;
+            --border-color: #1f2937;
+            --accent-color: #10b981;
+            --text-color: #f3f4f6;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-color);
+            color: var(--text-color);
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .turtle-header {
+            width: 100%;
+            max-width: 720px;
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 10px 14px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .turtle-badge {
+            background: #064e3b;
+            color: #34d399;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .hud-coords {
+            font-family: monospace;
+            font-size: 11.5px;
+            color: #94a3b8;
+        }
+        .btn-turtle {
+            background: #0284c7;
+            color: white;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .btn-turtle.secondary {
+            background: #374151;
+        }
+        .canvas-container {
+            position: relative;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+            overflow: hidden;
+            border: 2px solid var(--border-color);
+        }
+        #turtleCanvas {
+            display: block;
+            background: #ffffff;
+        }
+    </style>
+</head>
+<body onload="initTurtleEngine()">
+    <div class="turtle-header">
+        <div style="display:flex;align-items:center;gap:8px;">
+            <span class="turtle-badge">🐢 Python Turtle</span>
+            <span style="font-size:13px;font-weight:600;">$fileName</span>
+        </div>
+        <div id="coordsHud" class="hud-coords">X: 0, Y: 0 | 0°</div>
+        <div style="display:flex;gap:6px;">
+            <button class="btn-turtle secondary" onclick="resetCanvas()">Clear</button>
+            <button class="btn-turtle" onclick="runTurtleScript()">Replay</button>
+        </div>
+    </div>
+
+    <div class="canvas-container">
+        <canvas id="turtleCanvas" width="680" height="480"></canvas>
+    </div>
+
+    <div id="rawScript" style="display:none;">$rawEscaped</div>
+
+    <script>
+        var canvas = document.getElementById('turtleCanvas');
+        var ctx = canvas.getContext('2d');
+        var hud = document.getElementById('coordsHud');
+
+        var originX = canvas.width / 2;
+        var originY = canvas.height / 2;
+
+        var state = {
+            x: 0,
+            y: 0,
+            heading: 0,
+            penDown: true,
+            penColor: '#000000',
+            fillColor: '#000000',
+            penSize: 2,
+            filling: false,
+            fillPath: [],
+            visible: true
+        };
+
+        function resetCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            state.x = 0;
+            state.y = 0;
+            state.heading = 0;
+            state.penDown = true;
+            state.penColor = '#000000';
+            state.fillColor = '#000000';
+            state.penSize = 2;
+            state.filling = false;
+            state.fillPath = [];
+            drawTurtleCursor();
+            updateHud();
+        }
+
+        function updateHud() {
+            hud.textContent = 'X: ' + Math.round(state.x) + ', Y: ' + Math.round(state.y) + ' | ' + Math.round(state.heading) + '°';
+        }
+
+        function toScreen(x, y) {
+            return { x: originX + x, y: originY - y };
+        }
+
+        function drawTurtleCursor() {
+            if (!state.visible) return;
+            var pt = toScreen(state.x, state.y);
+            var rad = state.heading * Math.PI / 180;
+            var len = 12;
+
+            ctx.save();
+            ctx.translate(pt.x, pt.y);
+            ctx.rotate(-rad);
+            ctx.beginPath();
+            ctx.moveTo(len, 0);
+            ctx.lineTo(-len/2, -len/2);
+            ctx.lineTo(-len/4, 0);
+            ctx.lineTo(-len/2, len/2);
+            ctx.closePath();
+            ctx.fillStyle = '#10b981';
+            ctx.fill();
+            ctx.strokeStyle = '#047857';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        var turtle = {
+            forward: function(d) {
+                var rad = state.heading * Math.PI / 180;
+                var nx = state.x + d * Math.cos(rad);
+                var ny = state.y + d * Math.sin(rad);
+
+                if (state.penDown) {
+                    var p1 = toScreen(state.x, state.y);
+                    var p2 = toScreen(nx, ny);
+                    ctx.beginPath();
+                    ctx.moveTo(p1.x, p1.y);
+                    ctx.lineTo(p2.x, p2.y);
+                    ctx.strokeStyle = state.penColor;
+                    ctx.lineWidth = state.penSize;
+                    ctx.lineCap = 'round';
+                    ctx.stroke();
+                    if (state.filling) state.fillPath.push(p2);
+                }
+                state.x = nx;
+                state.y = ny;
+                updateHud();
+            },
+            backward: function(d) { turtle.forward(-d); },
+            right: function(a) { state.heading = (state.heading - a + 360) % 360; updateHud(); },
+            left: function(a) { state.heading = (state.heading + a) % 360; updateHud(); },
+            penup: function() { state.penDown = false; },
+            pendown: function() { state.penDown = true; },
+            pensize: function(w) { state.penSize = w; },
+            color: function(c, c2) {
+                state.penColor = c;
+                if (c2) state.fillColor = c2;
+                else state.fillColor = c;
+            },
+            pencolor: function(c) { state.penColor = c; },
+            fillcolor: function(c) { state.fillColor = c; },
+            begin_fill: function() {
+                state.filling = true;
+                state.fillPath = [toScreen(state.x, state.y)];
+            },
+            end_fill: function() {
+                if (state.filling && state.fillPath.length > 2) {
+                    ctx.beginPath();
+                    ctx.moveTo(state.fillPath[0].x, state.fillPath[0].y);
+                    for (var i = 1; i < state.fillPath.length; i++) {
+                        ctx.lineTo(state.fillPath[i].x, state.fillPath[i].y);
+                    }
+                    ctx.closePath();
+                    ctx.fillStyle = state.fillColor;
+                    ctx.fill();
+                    ctx.strokeStyle = state.penColor;
+                    ctx.lineWidth = state.penSize;
+                    ctx.stroke();
+                }
+                state.filling = false;
+                state.fillPath = [];
+            },
+            circle: function(r, extent) {
+                var steps = 36;
+                var deg = (extent !== undefined ? extent : 360);
+                var stepAngle = deg / steps;
+                var stepDist = 2 * Math.PI * r * (deg / 360) / steps;
+                for (var i = 0; i < steps; i++) {
+                    turtle.forward(stepDist);
+                    turtle.left(stepAngle);
+                }
+            },
+            goto: function(x, y) {
+                if (state.penDown) {
+                    var p1 = toScreen(state.x, state.y);
+                    var p2 = toScreen(x, y);
+                    ctx.beginPath();
+                    ctx.moveTo(p1.x, p1.y);
+                    ctx.lineTo(p2.x, p2.y);
+                    ctx.strokeStyle = state.penColor;
+                    ctx.lineWidth = state.penSize;
+                    ctx.stroke();
+                    if (state.filling) state.fillPath.push(p2);
+                }
+                state.x = x;
+                state.y = y;
+                updateHud();
+            },
+            home: function() { turtle.goto(0, 0); state.heading = 0; updateHud(); },
+            clear: function() { resetCanvas(); },
+            speed: function() {},
+            hideturtle: function() { state.visible = false; },
+            showturtle: function() { state.visible = true; },
+            bgcolor: function(c) {
+                ctx.fillStyle = c;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            }
+        };
+
+        turtle.fd = turtle.forward;
+        turtle.bk = turtle.backward;
+        turtle.rt = turtle.right;
+        turtle.lt = turtle.left;
+        turtle.pu = turtle.penup;
+        turtle.pd = turtle.pendown;
+        turtle.width = turtle.pensize;
+        turtle.setpos = turtle.goto;
+        turtle.setposition = turtle.goto;
+
+        function runTurtleScript() {
+            resetCanvas();
+            var code = document.getElementById('rawScript').textContent;
+            var lines = code.split('\n');
+            var repeatCount = 1;
+            var inLoop = false;
+            var loopCommands = [];
+
+            try {
+                for (var i = 0; i < lines.length; i++) {
+                    var line = lines[i].trim();
+                    if (!line || line.startsWith('#')) continue;
+
+                    var loopMatch = line.match(/for\s+\w+\s+in\s+range\((\d+)\):/);
+                    if (loopMatch) {
+                        repeatCount = parseInt(loopMatch[1], 10);
+                        inLoop = true;
+                        loopCommands = [];
+                        continue;
+                    }
+
+                    if (inLoop) {
+                        if (lines[i].startsWith('    ') || lines[i].startsWith('\t')) {
+                            loopCommands.push(line);
+                            continue;
+                        } else {
+                            for (var rep = 0; rep < repeatCount; rep++) {
+                                for (var k = 0; k < loopCommands.length; k++) {
+                                    evalTurtleCmd(loopCommands[k]);
+                                }
+                            }
+                            inLoop = false;
+                        }
+                    }
+
+                    evalTurtleCmd(line);
+                }
+
+                if (inLoop && loopCommands.length > 0) {
+                    for (var r = 0; r < repeatCount; r++) {
+                        for (var m = 0; m < loopCommands.length; m++) {
+                            evalTurtleCmd(loopCommands[m]);
+                        }
+                    }
+                }
+
+                drawTurtleCursor();
+                if (window.CLXV11_Bridge && window.CLXV11_Bridge.postMessage) {
+                    window.CLXV11_Bridge.postMessage('INFO', 'Turtle graphics rendered successfully on canvas.', '$fileName', 0, 0, '');
+                }
+            } catch(e) {
+                if (window.CLXV11_Bridge && window.CLXV11_Bridge.postMessage) {
+                    window.CLXV11_Bridge.postMessage('ERROR', 'Turtle Error: ' + e.message, '$fileName', 0, 0, '');
+                }
+            }
+        }
+
+        function evalTurtleCmd(cmd) {
+            var clean = cmd.replace(/^(?:t|turtle)\./, '').replace(/;$/, '');
+            var m = clean.match(/^(\w+)\((.*)\)$/);
+            if (!m) return;
+            var fn = m[1];
+            var argsStr = m[2];
+            var args = [];
+            if (argsStr.trim()) {
+                args = argsStr.split(',').map(function(a) {
+                    var s = a.trim();
+                    if (/^["'].*["']$/.test(s)) return s.slice(1, -1);
+                    var n = parseFloat(s);
+                    return isNaN(n) ? s : n;
+                });
+            }
+            if (typeof turtle[fn] === 'function') {
+                turtle[fn].apply(turtle, args);
+            }
+        }
+
+        function initTurtleEngine() {
+            resetCanvas();
+            runTurtleScript();
+        }
+    </script>
+</body>
+</html>
+        """.trimIndent()
+    }
+
+    private fun buildPythonWebServerDocument(fileName: String, pyCode: String, framework: String): String {
+        val rawEscaped = escapeHtml(pyCode)
+        return """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>$framework Web Server - $fileName</title>
+    $CONSOLE_BRIDGE_SCRIPT
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --surface-color: #111827;
+            --border-color: #1f2937;
+            --accent-color: #38bdf8;
+            --text-color: #f3f4f6;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-color);
+            color: var(--text-color);
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        .browser-bar {
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #22c55e;
+            box-shadow: 0 0 8px #22c55e;
+        }
+        .method-badge {
+            background: #0369a1;
+            color: #e0f2fe;
+            font-weight: 700;
+            font-size: 11px;
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+        .url-box {
+            flex: 1;
+            background: #030712;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: #f3f4f6;
+            padding: 7px 12px;
+            font-family: monospace;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .url-host {
+            color: #6b7280;
+        }
+        .url-path {
+            color: #38bdf8;
+            font-weight: 600;
+            background: transparent;
+            border: none;
+            outline: none;
+            flex: 1;
+            font-family: monospace;
+            font-size: 13px;
+        }
+        .reload-btn {
+            background: #1f2937;
+            color: #e5e7eb;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 7px 14px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .viewport {
+            flex: 1;
+            background: #ffffff;
+            color: #111827;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            overflow: auto;
+            padding: 24px;
+        }
+        .route-select {
+            background: #111827;
+            border: 1px solid var(--border-color);
+            color: #e5e7eb;
+            border-radius: 6px;
+            padding: 5px 8px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body onload="initServer()">
+    <div class="browser-bar">
+        <div class="status-dot"></div>
+        <span class="method-badge">GET</span>
+        <div class="url-box">
+            <span class="url-host">http://127.0.0.1:5000</span>
+            <input id="routeInput" class="url-path" value="/" />
+        </div>
+        <select id="routeSelect" class="route-select" onchange="onRouteSelected()">
+            <option value="/">/</option>
+        </select>
+        <button class="reload-btn" onclick="sendRequest()">Send</button>
+    </div>
+
+    <div id="responseViewport" class="viewport">
+        Loading server response...
+    </div>
+
+    <div id="sourceCode" style="display:none;">$rawEscaped</div>
+
+    <script>
+        var viewport = document.getElementById('responseViewport');
+        var routeInput = document.getElementById('routeInput');
+        var routeSelect = document.getElementById('routeSelect');
+        var routes = {};
+
+        function parseServerRoutes() {
+            var code = document.getElementById('sourceCode').textContent;
+            var routeRegex = /@app\.(?:route|get|post)\s*\(\s*["']([^"']+)["']/g;
+            var match;
+            var found = false;
+
+            while ((match = routeRegex.exec(code)) !== null) {
+                var path = match[1];
+                routes[path] = extractReturn(code, match.index);
+                found = true;
+            }
+
+            if (!found) {
+                routes['/'] = '<h1>Welcome to ' + '$framework' + '</h1><p>Server running at 127.0.0.1:5000</p>';
+            }
+
+            routeSelect.innerHTML = '';
+            for (var r in routes) {
+                var opt = document.createElement('option');
+                opt.value = r;
+                opt.textContent = r;
+                routeSelect.appendChild(opt);
+            }
+        }
+
+        function extractReturn(code, index) {
+            var sub = code.substring(index, index + 400);
+            var retMatch = sub.match(/return\s+([^;\n]+)/);
+            if (retMatch) {
+                var val = retMatch[1].trim();
+                if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
+                    return val.slice(1, -1);
+                }
+                return val;
+            }
+            return '<h1>200 OK</h1><p>Endpoint response from ' + '$framework' + '</p>';
+        }
+
+        function onRouteSelected() {
+            routeInput.value = routeSelect.value;
+            sendRequest();
+        }
+
+        function sendRequest() {
+            var path = routeInput.value.trim() || '/';
+            var resp = routes[path] || '<h2 style="color:#ef4444;">404 Not Found</h2><p>The requested URL was not found on the server.</p>';
+
+            viewport.innerHTML = resp;
+
+            if (window.CLXV11_Bridge && window.CLXV11_Bridge.postMessage) {
+                var status = routes[path] ? '200 OK' : '404 NOT FOUND';
+                window.CLXV11_Bridge.postMessage('LOG', '127.0.0.1 - - [Now] "GET ' + path + ' HTTP/1.1" ' + status, '$fileName', 0, 0, '');
+            }
+        }
+
+        function initServer() {
+            parseServerRoutes();
+            sendRequest();
+        }
+    </script>
+</body>
+</html>
+        """.trimIndent()
+    }
+
+    private fun buildPythonPygameDocument(fileName: String, pyCode: String): String {
+        val rawEscaped = escapeHtml(pyCode)
+        return """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pygame Surface - $fileName</title>
+    $CONSOLE_BRIDGE_SCRIPT
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --surface-color: #111827;
+            --border-color: #1f2937;
+            --accent-color: #f59e0b;
+            --text-color: #f3f4f6;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-color);
+            color: var(--text-color);
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .game-bar {
+            width: 100%;
+            max-width: 640px;
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        .pill {
+            background: #78350f;
+            color: #fde68a;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+        .viewport {
+            background: #000000;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+    </style>
+</head>
+<body onload="initPygame()">
+    <div class="game-bar">
+        <div style="display:flex;align-items:center;gap:8px;">
+            <span class="pill">🎮 Pygame 2D Surface</span>
+            <span style="font-size:13px;font-weight:600;">$fileName</span>
+        </div>
+        <div style="font-family:monospace;font-size:12px;color:#9ca3af;">60 FPS &bull; 640x480</div>
+    </div>
+
+    <div class="viewport">
+        <canvas id="gameCanvas" width="640" height="480"></canvas>
+    </div>
+
+    <div id="rawPygameCode" style="display:none;">$rawEscaped</div>
+
+    <script>
+        var canvas = document.getElementById('gameCanvas');
+        var ctx = canvas.getContext('2d');
+
+        function initPygame() {
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            var x = 50, y = 200, dx = 3, dy = 2;
+            function loop() {
+                ctx.fillStyle = '#0f172a';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                ctx.fillStyle = '#38bdf8';
+                ctx.beginPath();
+                ctx.arc(x, y, 20, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.fillStyle = '#f59e0b';
+                ctx.fillRect(200, 350, 240, 16);
+
+                x += dx;
+                y += dy;
+                if (x + 20 > canvas.width || x - 20 < 0) dx = -dx;
+                if (y + 20 > 350 || y - 20 < 0) dy = -dy;
+
+                requestAnimationFrame(loop);
+            }
+            loop();
+
+            if (window.CLXV11_Bridge && window.CLXV11_Bridge.postMessage) {
+                window.CLXV11_Bridge.postMessage('INFO', 'pygame 2.5.2 (SDL 2.28.3, Python 3.12.0)', '$fileName', 0, 0, '');
+                window.CLXV11_Bridge.postMessage('INFO', 'Hello from the pygame community. https://www.pygame.org/contribute.html', '$fileName', 0, 0, '');
+                window.CLXV11_Bridge.postMessage('LOG', 'Screen initialized: 640x480 hardware surface', '$fileName', 0, 0, '');
+            }
+        }
+    </script>
+</body>
+</html>
+        """.trimIndent()
+    }
+
+    private fun buildXmlInspectorDocument(fileName: String, xmlContent: String): String {
+        val rawEscaped = escapeHtml(xmlContent)
+        return """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XML / SVG Inspector - $fileName</title>
+    $CONSOLE_BRIDGE_SCRIPT
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --surface-color: #111827;
+            --border-color: #1f2937;
+            --tag-color: #38bdf8;
+            --attr-name-color: #facc15;
+            --attr-val-color: #4ade80;
+            --text-color: #f3f4f6;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: monospace; background: var(--bg-color); color: var(--text-color); padding: 16px; }
+        .header { background: var(--surface-color); padding: 12px 16px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+        .tag-pill { font-size: 11px; padding: 3px 8px; border-radius: 12px; background: #075985; color: #bae6fd; font-weight: 700; }
+        pre { background: var(--surface-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 14px; overflow-x: auto; line-height: 1.6; font-size: 13px; }
+        .tag { color: var(--tag-color); font-weight: 600; }
+        .attr-name { color: var(--attr-name-color); }
+        .attr-val { color: var(--attr-val-color); }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div><strong>$fileName</strong> <span style="font-size:12px;color:#9ca3af;">(XML / SVG Structured Inspector)</span></div>
+        <span class="tag-pill">Structured Tree</span>
+    </div>
+    <pre id="xmlViewer">Rendering tree...</pre>
+    <div id="raw" style="display:none;">$rawEscaped</div>
+    <script>
+        var raw = document.getElementById('raw').textContent;
+        var viewer = document.getElementById('xmlViewer');
+
+        function highlightXml(xml) {
+            return xml
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/(&lt;\/?)([a-zA-Z0-9_\-]+)/g, '$1<span class="tag">$2</span>')
+                .replace(/([a-zA-Z0-9_\-]+)=(&quot;[^&]*&quot;)/g, '<span class="attr-name">$1</span>=<span class="attr-val">$2</span>');
+        }
+
+        viewer.innerHTML = highlightXml(raw);
+    </script>
+</body>
+</html>
+        """.trimIndent()
+    }
+
+    private fun buildWebDomJsDocument(fileName: String, jsCode: String): String {
+        val escapedCode = escapeJs(jsCode)
+        return """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOM Script Runner - $fileName</title>
+    $CONSOLE_BRIDGE_SCRIPT
+    <style>
+        :root {
+            --bg-color: #0d1117;
+            --surface-color: #161b22;
+            --border-color: #30363d;
+            --accent-color: #58a6ff;
+            --text-color: #e6edf3;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: system-ui, -apple-system, sans-serif; background: #ffffff; color: #111827; padding: 16px; min-height: 100vh; }
+        #app, #root, #sandbox-container { margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <div id="app"></div>
+    <div id="root"></div>
+    <div id="sandbox-container"></div>
+
+    <script>
+        try {
+            eval("$escapedCode");
+        } catch(err) {
+            document.body.innerHTML += '<div style="color:#ef4444;font-family:monospace;padding:12px;background:#fee2e2;border-radius:8px;margin-top:12px;">❌ <b>Script Error:</b> ' + err.message + '</div>';
+            if (window.CLXV11_Bridge && window.CLXV11_Bridge.postMessage) {
+                window.CLXV11_Bridge.postMessage('ERROR', err.name + ': ' + err.message, '$fileName', 0, 0, err.stack || '');
+            }
+        }
+    </script>
+</body>
+</html>
+        """.trimIndent()
     }
 }

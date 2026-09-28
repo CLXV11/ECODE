@@ -18,6 +18,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.example.editor.settings.LocalAppStrings
 
 @Composable
 fun GoToLineDialog(
@@ -26,15 +27,16 @@ fun GoToLineDialog(
     onConfirm: (Int) -> Unit,
     onDismiss: () -> Unit
 ) {
+    val strings = LocalAppStrings.current
     var lineInput by remember { mutableStateOf(currentLine.toString()) }
     var isError by remember { mutableStateOf(false) }
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Go to Line") },
+        title = { Text(strings.goToLine) },
         text = {
             Column {
-                Text("Enter line number between 1 and $totalLines:")
+                Text(String.format(strings.goToLinePrompt, totalLines))
                 Spacer(modifier = Modifier.height(8.dp))
                 OutlinedTextField(
                     value = lineInput,
@@ -57,7 +59,7 @@ fun GoToLineDialog(
                     modifier = Modifier.fillMaxWidth(),
                     supportingText = {
                         if (isError) {
-                            Text("Invalid line number")
+                            Text(strings.invalidLineNumber)
                         }
                     }
                 )
@@ -74,12 +76,12 @@ fun GoToLineDialog(
                     }
                 }
             ) {
-                Text("Go")
+                Text(strings.goButton)
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(strings.cancel)
             }
         }
     )

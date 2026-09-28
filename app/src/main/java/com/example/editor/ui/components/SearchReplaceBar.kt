@@ -91,7 +91,7 @@ fun SearchReplaceBar(
                     modifier = Modifier
                         .testTag("search_query_input")
                         .weight(1f)
-                        .height(48.dp),
+                        .height(52.dp),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedContainerColor = MaterialTheme.colorScheme.surface,
                         unfocusedContainerColor = MaterialTheme.colorScheme.surface
@@ -149,7 +149,7 @@ fun SearchReplaceBar(
                     modifier = Modifier
                         .testTag("replace_query_input")
                         .weight(1f)
-                        .height(48.dp),
+                        .height(52.dp),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedContainerColor = MaterialTheme.colorScheme.surface,
                         unfocusedContainerColor = MaterialTheme.colorScheme.surface

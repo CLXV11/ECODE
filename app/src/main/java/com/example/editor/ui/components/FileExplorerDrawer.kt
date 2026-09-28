@@ -57,6 +57,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -107,6 +108,7 @@ fun FileExplorerDrawer(
     onRunRecentWebFile: ((RecentFileItem) -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
+    val strings = LocalAppStrings.current
     var selectedSection by remember { mutableIntStateOf(0) } // 0: Files, 1: Recents
     val dateFormat = remember { SimpleDateFormat("MMM dd, HH:mm", Locale.getDefault()) }
 
@@ -133,7 +135,7 @@ fun FileExplorerDrawer(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "Explorer",
+                    text = strings.explorer,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface
@@ -141,13 +143,13 @@ fun FileExplorerDrawer(
 
                 Row {
                     IconButton(onClick = onNewFileClick, modifier = Modifier.size(36.dp)) {
-                        Icon(Icons.AutoMirrored.Filled.NoteAdd, contentDescription = "New File")
+                        Icon(Icons.AutoMirrored.Filled.NoteAdd, contentDescription = strings.newFile)
                     }
                     IconButton(onClick = onNewFolderClick, modifier = Modifier.size(36.dp)) {
-                        Icon(Icons.Default.CreateNewFolder, contentDescription = "New Folder")
+                        Icon(Icons.Default.CreateNewFolder, contentDescription = strings.newFolder)
                     }
                     IconButton(onClick = onRefresh, modifier = Modifier.size(36.dp)) {
-                        Icon(Icons.Default.Refresh, contentDescription = "Refresh")
+                        Icon(Icons.Default.Refresh, contentDescription = strings.refresh)
                     }
                 }
             }
@@ -160,13 +162,13 @@ fun FileExplorerDrawer(
                 Tab(
                     selected = selectedSection == 0,
                     onClick = { selectedSection = 0 },
-                    text = { Text("Workspace", fontSize = 13.sp) },
+                    text = { Text(strings.workspace, fontSize = 13.sp) },
                     icon = { Icon(Icons.Default.Folder, contentDescription = null, modifier = Modifier.size(18.dp)) }
                 )
                 Tab(
                     selected = selectedSection == 1,
                     onClick = { selectedSection = 1 },
-                    text = { Text("Recents", fontSize = 13.sp) },
+                    text = { Text(strings.recents, fontSize = 13.sp) },
                     icon = { Icon(Icons.Default.History, contentDescription = null, modifier = Modifier.size(18.dp)) }
                 )
             }
@@ -214,7 +216,7 @@ fun FileExplorerDrawer(
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
-                                    text = "Folder is empty",
+                                    text = strings.folderIsEmpty,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     fontSize = 14.sp
                                 )
@@ -259,7 +261,7 @@ fun FileExplorerDrawer(
                                 ) {
                                     Icon(Icons.Default.FileOpen, contentDescription = null, modifier = Modifier.size(16.dp))
                                     Spacer(modifier = Modifier.width(6.dp))
-                                    Text("Open File", fontSize = 12.sp)
+                                    Text(strings.openFile, fontSize = 12.sp, maxLines = 1)
                                 }
 
                                 androidx.compose.material3.OutlinedButton(
@@ -269,7 +271,7 @@ fun FileExplorerDrawer(
                                 ) {
                                     Icon(Icons.Default.FolderOpen, contentDescription = null, modifier = Modifier.size(16.dp))
                                     Spacer(modifier = Modifier.width(6.dp))
-                                    Text("Folder Tree", fontSize = 12.sp)
+                                    Text(strings.folderTree, fontSize = 12.sp, maxLines = 1)
                                 }
                             }
 
@@ -282,7 +284,7 @@ fun FileExplorerDrawer(
                             ) {
                                 Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(16.dp))
                                 Spacer(modifier = Modifier.width(6.dp))
-                                Text("Create External Document (SAF)", fontSize = 12.sp)
+                                Text(strings.createExternalDoc, fontSize = 12.sp, maxLines = 1)
                             }
                         }
                     }
@@ -296,7 +298,7 @@ fun FileExplorerDrawer(
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = "No recent files",
+                                text = strings.noRecentFiles,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 fontSize = 14.sp
                             )
@@ -363,7 +365,7 @@ fun FileExplorerDrawer(
 
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "CodeXCroc / GitHub",
+                            text = "ECODE / GitHub",
                             fontSize = 13.sp,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onSurface
@@ -383,6 +385,88 @@ fun FileExplorerDrawer(
                     )
                 }
             }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Community Links Row (Telegram & Discord)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                // Telegram
+                Surface(
+                    onClick = {
+                        try {
+                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://t.me/EPCD11")).apply {
+                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            }
+                            context.startActivity(intent)
+                        } catch (_: Exception) {
+                            Toast.makeText(context, "https://t.me/EPCD11", Toast.LENGTH_SHORT).show()
+                        }
+                    },
+                    shape = RoundedCornerShape(12.dp),
+                    color = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.85f),
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 7.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_telegram),
+                            contentDescription = "Telegram",
+                            tint = Color(0xFF2AABEE),
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = "Telegram",
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                }
+
+                // Discord
+                Surface(
+                    onClick = {
+                        try {
+                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://discord.gg/FkssmYFY")).apply {
+                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            }
+                            context.startActivity(intent)
+                        } catch (_: Exception) {
+                            Toast.makeText(context, "https://discord.gg/FkssmYFY", Toast.LENGTH_SHORT).show()
+                        }
+                    },
+                    shape = RoundedCornerShape(12.dp),
+                    color = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.85f),
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 7.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_discord),
+                            contentDescription = "Discord",
+                            tint = Color(0xFF5865F2),
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = "Discord",
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                }
+            }
         }
     }
 }
@@ -398,6 +482,7 @@ private fun WorkspaceItemRow(
     onProperties: () -> Unit,
     onRunWebFile: (() -> Unit)? = null
 ) {
+    val strings = LocalAppStrings.current
     var menuExpanded by remember { mutableStateOf(false) }
 
     Row(
@@ -419,7 +504,7 @@ private fun WorkspaceItemRow(
         } else {
             LanguageIcon(
                 iconDef = item.languageDefinition.icon,
-                size = 22.dp
+                size = 24.dp
             )
         }
 
@@ -471,7 +556,7 @@ private fun WorkspaceItemRow(
             ) {
                 if (!item.isDirectory && WebRunnerContentBuilder.isWebRunnable(item.name)) {
                     DropdownMenuItem(
-                        text = { Text("Run / Preview Code") },
+                        text = { Text(strings.runPreview) },
                         leadingIcon = { Icon(Icons.Default.PlayArrow, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
                         onClick = {
                             menuExpanded = false
@@ -480,21 +565,21 @@ private fun WorkspaceItemRow(
                     )
                 }
                 DropdownMenuItem(
-                    text = { Text("Open") },
+                    text = { Text(strings.openFile) },
                     onClick = {
                         menuExpanded = false
                         onClick()
                     }
                 )
                 DropdownMenuItem(
-                    text = { Text("Rename") },
+                    text = { Text(strings.renameFile) },
                     onClick = {
                         menuExpanded = false
                         onRename()
                     }
                 )
                 DropdownMenuItem(
-                    text = { Text("Delete") },
+                    text = { Text(strings.delete) },
                     onClick = {
                         menuExpanded = false
                         onDelete()
@@ -502,7 +587,7 @@ private fun WorkspaceItemRow(
                 )
                 if (!item.isDirectory) {
                     DropdownMenuItem(
-                        text = { Text("Share") },
+                        text = { Text(strings.share) },
                         onClick = {
                             menuExpanded = false
                             onShare()
@@ -510,7 +595,7 @@ private fun WorkspaceItemRow(
                     )
                 }
                 DropdownMenuItem(
-                    text = { Text("Properties") },
+                    text = { Text(strings.properties) },
                     onClick = {
                         menuExpanded = false
                         onProperties()
@@ -530,6 +615,7 @@ private fun RecentFileRow(
     onRemove: () -> Unit,
     onRunWebFile: (() -> Unit)? = null
 ) {
+    val strings = LocalAppStrings.current
     val lang = LanguageRegistry.findById(item.languageId)
     var menuExpanded by remember { mutableStateOf(false) }
 
@@ -544,7 +630,7 @@ private fun RecentFileRow(
     ) {
         LanguageIcon(
             iconDef = lang.icon,
-            size = 22.dp
+            size = 24.dp
         )
 
         Spacer(modifier = Modifier.width(12.dp))
@@ -569,7 +655,7 @@ private fun RecentFileRow(
             IconButton(onClick = { menuExpanded = true }, modifier = Modifier.size(32.dp)) {
                 Icon(
                     imageVector = androidx.compose.material.icons.Icons.Default.MoreVert,
-                    contentDescription = "Options",
+                    contentDescription = strings.moreOptions,
                     modifier = Modifier.size(18.dp)
                 )
             }
@@ -581,7 +667,7 @@ private fun RecentFileRow(
             ) {
                 if (WebRunnerContentBuilder.isWebRunnable(item.name, item.languageId)) {
                     DropdownMenuItem(
-                        text = { Text("Run / Preview Code") },
+                        text = { Text(strings.runPreview) },
                         leadingIcon = { Icon(Icons.Default.PlayArrow, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
                         onClick = {
                             menuExpanded = false
@@ -590,14 +676,14 @@ private fun RecentFileRow(
                     )
                 }
                 DropdownMenuItem(
-                    text = { Text("Open") },
+                    text = { Text(strings.openFile) },
                     onClick = {
                         menuExpanded = false
                         onClick()
                     }
                 )
                 DropdownMenuItem(
-                    text = { Text("Rename") },
+                    text = { Text(strings.renameFile) },
                     leadingIcon = { Icon(Icons.Default.DriveFileRenameOutline, contentDescription = null) },
                     onClick = {
                         menuExpanded = false
@@ -605,7 +691,7 @@ private fun RecentFileRow(
                     }
                 )
                 DropdownMenuItem(
-                    text = { Text("Remove from Recents") },
+                    text = { Text(strings.delete) },
                     leadingIcon = { Icon(Icons.Default.Delete, contentDescription = null) },
                     onClick = {
                         menuExpanded = false

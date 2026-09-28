@@ -80,6 +80,17 @@ enum class LanguageIconStyle {
     ASTRO,
     AUTOHOTKEY,
     GIT,
+    CLOJURE,
+    ZIG,
+    NIM,
+    CRYSTAL,
+    SOLIDITY,
+    FSHARP,
+    OCAML,
+    FORTRAN,
+    COBOL,
+    D_LANG,
+    BALLERINA,
     GENERIC_CODE,
     PLAIN_TEXT
 }
@@ -464,6 +475,83 @@ object LanguageIcons {
         label = "GIT"
     )
 
+    val CLOJURE = LanguageIconDefinition(
+        style = LanguageIconStyle.CLOJURE,
+        primaryColor = Color(0xFF62B132),
+        badgeBgColor = Color(0xFF1E232A),
+        label = "CLJ"
+    )
+
+    val ZIG = LanguageIconDefinition(
+        style = LanguageIconStyle.ZIG,
+        primaryColor = Color(0xFFFFFFFF),
+        badgeBgColor = Color(0xFFF7A41D),
+        label = "ZIG"
+    )
+
+    val NIM = LanguageIconDefinition(
+        style = LanguageIconStyle.NIM,
+        primaryColor = Color(0xFFFFD700),
+        badgeBgColor = Color(0xFF172B36),
+        label = "NIM"
+    )
+
+    val CRYSTAL = LanguageIconDefinition(
+        style = LanguageIconStyle.CRYSTAL,
+        primaryColor = Color(0xFF00E5FF),
+        badgeBgColor = Color(0xFF222222),
+        label = "CR"
+    )
+
+    val SOLIDITY = LanguageIconDefinition(
+        style = LanguageIconStyle.SOLIDITY,
+        primaryColor = Color(0xFFFFFFFF),
+        badgeBgColor = Color(0xFF1F1F1F),
+        label = "SOL"
+    )
+
+    val FSHARP = LanguageIconDefinition(
+        style = LanguageIconStyle.FSHARP,
+        primaryColor = Color(0xFF30B9DB),
+        badgeBgColor = Color(0xFF1E2836),
+        label = "F#"
+    )
+
+    val OCAML = LanguageIconDefinition(
+        style = LanguageIconStyle.OCAML,
+        primaryColor = Color(0xFFFFFFFF),
+        badgeBgColor = Color(0xFFEE6A1A),
+        label = "ML"
+    )
+
+    val FORTRAN = LanguageIconDefinition(
+        style = LanguageIconStyle.FORTRAN,
+        primaryColor = Color(0xFFFFFFFF),
+        badgeBgColor = Color(0xFF734F96),
+        label = "FOR"
+    )
+
+    val COBOL = LanguageIconDefinition(
+        style = LanguageIconStyle.COBOL,
+        primaryColor = Color(0xFFFFFFFF),
+        badgeBgColor = Color(0xFF003366),
+        label = "COB"
+    )
+
+    val D_LANG = LanguageIconDefinition(
+        style = LanguageIconStyle.D_LANG,
+        primaryColor = Color(0xFFFFFFFF),
+        badgeBgColor = Color(0xFFB03931),
+        label = "D"
+    )
+
+    val BALLERINA = LanguageIconDefinition(
+        style = LanguageIconStyle.BALLERINA,
+        primaryColor = Color(0xFFFFFFFF),
+        badgeBgColor = Color(0xFF20B6B0),
+        label = "BAL"
+    )
+
     val GENERIC_CODE = LanguageIconDefinition(
         style = LanguageIconStyle.GENERIC_CODE,
         primaryColor = Color(0xFFFFFFFF),
@@ -506,9 +594,19 @@ fun LanguageIcon(
                 LanguageVectorDrawers.drawHtml(this, this.size.minDimension)
             }
         }
-        LanguageIconStyle.CSS, LanguageIconStyle.SCSS, LanguageIconStyle.LESS -> {
+        LanguageIconStyle.CSS -> {
             Canvas(modifier = modifier.size(size)) {
                 LanguageVectorDrawers.drawCss(this, this.size.minDimension)
+            }
+        }
+        LanguageIconStyle.SCSS -> {
+            Canvas(modifier = modifier.size(size)) {
+                LanguageVectorDrawers.drawScss(this, this.size.minDimension)
+            }
+        }
+        LanguageIconStyle.LESS -> {
+            Canvas(modifier = modifier.size(size)) {
+                LanguageVectorDrawers.drawLess(this, this.size.minDimension)
             }
         }
         LanguageIconStyle.JAVASCRIPT -> {
@@ -656,9 +754,24 @@ fun LanguageIcon(
                 LanguageVectorDrawers.drawYaml(this, this.size.minDimension)
             }
         }
-        LanguageIconStyle.TOML, LanguageIconStyle.INI, LanguageIconStyle.PROPERTIES -> {
+        LanguageIconStyle.R -> {
+            Canvas(modifier = modifier.size(size)) {
+                LanguageVectorDrawers.drawR(this, this.size.minDimension)
+            }
+        }
+        LanguageIconStyle.PERL -> {
+            Canvas(modifier = modifier.size(size)) {
+                LanguageVectorDrawers.drawPerl(this, this.size.minDimension)
+            }
+        }
+        LanguageIconStyle.TOML -> {
             Canvas(modifier = modifier.size(size)) {
                 LanguageVectorDrawers.drawToml(this, this.size.minDimension)
+            }
+        }
+        LanguageIconStyle.INI, LanguageIconStyle.PROPERTIES -> {
+            Canvas(modifier = modifier.size(size)) {
+                LanguageVectorDrawers.drawIni(this, this.size.minDimension)
             }
         }
         LanguageIconStyle.DOCKERFILE -> {
@@ -666,9 +779,24 @@ fun LanguageIcon(
                 LanguageVectorDrawers.drawDocker(this, this.size.minDimension)
             }
         }
-        LanguageIconStyle.GRADLE, LanguageIconStyle.GROOVY -> {
+        LanguageIconStyle.MAKEFILE -> {
+            Canvas(modifier = modifier.size(size)) {
+                LanguageVectorDrawers.drawMakefile(this, this.size.minDimension)
+            }
+        }
+        LanguageIconStyle.GRADLE -> {
             Canvas(modifier = modifier.size(size)) {
                 LanguageVectorDrawers.drawGradle(this, this.size.minDimension)
+            }
+        }
+        LanguageIconStyle.GROOVY -> {
+            Canvas(modifier = modifier.size(size)) {
+                LanguageVectorDrawers.drawGroovy(this, this.size.minDimension)
+            }
+        }
+        LanguageIconStyle.CLOJURE -> {
+            Canvas(modifier = modifier.size(size)) {
+                LanguageVectorDrawers.drawClojure(this, this.size.minDimension)
             }
         }
         LanguageIconStyle.GRAPHQL -> {
@@ -681,9 +809,64 @@ fun LanguageIcon(
                 LanguageVectorDrawers.drawHaskell(this, this.size.minDimension)
             }
         }
-        LanguageIconStyle.ELIXIR, LanguageIconStyle.ERLANG -> {
+        LanguageIconStyle.ELIXIR -> {
             Canvas(modifier = modifier.size(size)) {
                 LanguageVectorDrawers.drawElixir(this, this.size.minDimension)
+            }
+        }
+        LanguageIconStyle.ERLANG -> {
+            Canvas(modifier = modifier.size(size)) {
+                LanguageVectorDrawers.drawErlang(this, this.size.minDimension)
+            }
+        }
+        LanguageIconStyle.ZIG -> {
+            Canvas(modifier = modifier.size(size)) {
+                LanguageVectorDrawers.drawZig(this, this.size.minDimension)
+            }
+        }
+        LanguageIconStyle.NIM -> {
+            Canvas(modifier = modifier.size(size)) {
+                LanguageVectorDrawers.drawNim(this, this.size.minDimension)
+            }
+        }
+        LanguageIconStyle.CRYSTAL -> {
+            Canvas(modifier = modifier.size(size)) {
+                LanguageVectorDrawers.drawCrystal(this, this.size.minDimension)
+            }
+        }
+        LanguageIconStyle.SOLIDITY -> {
+            Canvas(modifier = modifier.size(size)) {
+                LanguageVectorDrawers.drawSolidity(this, this.size.minDimension)
+            }
+        }
+        LanguageIconStyle.FSHARP -> {
+            Canvas(modifier = modifier.size(size)) {
+                LanguageVectorDrawers.drawFSharp(this, this.size.minDimension)
+            }
+        }
+        LanguageIconStyle.OCAML -> {
+            Canvas(modifier = modifier.size(size)) {
+                LanguageVectorDrawers.drawOCaml(this, this.size.minDimension)
+            }
+        }
+        LanguageIconStyle.FORTRAN -> {
+            Canvas(modifier = modifier.size(size)) {
+                LanguageVectorDrawers.drawFortran(this, this.size.minDimension)
+            }
+        }
+        LanguageIconStyle.COBOL -> {
+            Canvas(modifier = modifier.size(size)) {
+                LanguageVectorDrawers.drawCobol(this, this.size.minDimension)
+            }
+        }
+        LanguageIconStyle.D_LANG -> {
+            Canvas(modifier = modifier.size(size)) {
+                LanguageVectorDrawers.drawD(this, this.size.minDimension)
+            }
+        }
+        LanguageIconStyle.BALLERINA -> {
+            Canvas(modifier = modifier.size(size)) {
+                LanguageVectorDrawers.drawBallerina(this, this.size.minDimension)
             }
         }
         LanguageIconStyle.SCALA -> {
@@ -701,28 +884,14 @@ fun LanguageIcon(
                 LanguageVectorDrawers.drawDocument(this, this.size.minDimension)
             }
         }
+        LanguageIconStyle.GENERIC_CODE -> {
+            Canvas(modifier = modifier.size(size)) {
+                LanguageVectorDrawers.drawGenericCode(this, this.size.minDimension)
+            }
+        }
         else -> {
-            Box(
-                modifier = modifier
-                    .size(size)
-                    .clip(RoundedCornerShape(cornerRadius))
-                    .background(iconDef.badgeBgColor),
-                contentAlignment = Alignment.Center
-            ) {
-                val fontSize = when {
-                    iconDef.label.length >= 4 -> (size.value * 0.30f).sp
-                    iconDef.label.length == 3 -> (size.value * 0.36f).sp
-                    iconDef.label.length == 2 -> (size.value * 0.42f).sp
-                    else -> (size.value * 0.50f).sp
-                }
-                Text(
-                    text = iconDef.label,
-                    color = iconDef.primaryColor,
-                    fontSize = fontSize,
-                    fontWeight = FontWeight.Black,
-                    fontFamily = FontFamily.Monospace,
-                    maxLines = 1
-                )
+            Canvas(modifier = modifier.size(size)) {
+                LanguageVectorDrawers.drawGenericCode(this, this.size.minDimension)
             }
         }
     }

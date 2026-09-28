@@ -81,7 +81,7 @@ fun EditorTabBar(
                 ) {
                     LanguageIcon(
                         iconDef = tab.language.icon,
-                        size = 18.dp
+                        size = 20.dp
                     )
 
                     Spacer(modifier = Modifier.width(6.dp))

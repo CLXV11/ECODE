@@ -13,8 +13,21 @@ import kotlinx.coroutines.launch
 class WebConsoleBridge(
     private val scope: CoroutineScope,
     private val onMessage: (WebConsoleMessage) -> Unit,
-    private val onTitleChanged: ((String) -> Unit)? = null
+    private val onTitleChanged: ((String) -> Unit)? = null,
+    private val onTabSwitchRequested: ((WebRunnerTab) -> Unit)? = null
 ) {
+    @JavascriptInterface
+    fun switchTab(tabName: String) {
+        val tab = when (tabName.uppercase()) {
+            "CONSOLE" -> WebRunnerTab.CONSOLE
+            "PREVIEW" -> WebRunnerTab.PREVIEW
+            "SPLIT" -> WebRunnerTab.SPLIT
+            else -> WebRunnerTab.CONSOLE
+        }
+        scope.launch(Dispatchers.Main) {
+            onTabSwitchRequested?.invoke(tab)
+        }
+    }
     @JavascriptInterface
     fun postMessage(
         levelStr: String,

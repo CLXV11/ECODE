@@ -77,7 +77,7 @@ class AutoSaveManager(context: Context) {
         writeMutex.withLock {
             val timestamp = System.currentTimeMillis()
             if (tabs.isEmpty()) {
-                clearAll()
+                clearInternal()
                 return@withLock timestamp
             }
 
@@ -223,13 +223,17 @@ class AutoSaveManager(context: Context) {
         }
     }
 
+    private fun clearInternal() {
+        val files = snapshotDir.listFiles()
+        files?.forEach { it.delete() }
+    }
+
     /**
      * Clears all snapshot files and manifest.
      */
     suspend fun clearAll() = withContext(Dispatchers.IO) {
         writeMutex.withLock {
-            val files = snapshotDir.listFiles()
-            files?.forEach { it.delete() }
+            clearInternal()
         }
     }
 }

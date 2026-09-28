@@ -81,6 +81,7 @@ import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.VerticalDivider
+import com.example.editor.settings.LocalAppStrings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -92,6 +93,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -133,6 +135,7 @@ fun WebRunnerDialog(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
+    val strings = LocalAppStrings.current
     val coroutineScope = rememberCoroutineScope()
     var webViewInstance by remember { mutableStateOf<WebView?>(null) }
     var reloadTrigger by remember { mutableIntStateOf(0) }
@@ -198,121 +201,105 @@ fun WebRunnerDialog(
                 }
 
                 // Main Content View (Preview, Console, or Split)
-                BoxWithConstraints(
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f)
                 ) {
-                    when (state.activeTab) {
-                        WebRunnerTab.PREVIEW -> {
-                            WebPreviewContainer(
-                                viewportMode = state.viewportMode,
-                                state = state,
-                                reloadTrigger = reloadTrigger,
-                                onWebViewCreated = { webViewInstance = it },
-                                onProgress = { progress, loading ->
-                                    loadProgress = progress
-                                    isCurrentlyLoading = loading
-                                },
-                                onJsDialog = { activeJsDialog = it },
-                                onAddLogMessage = onAddLogMessage,
-                                onPageTitleChanged = onPageTitleChanged
-                            )
-                        }
+                    val isPreviewVisible = state.activeTab == WebRunnerTab.PREVIEW
+                    val isConsoleVisible = state.activeTab == WebRunnerTab.CONSOLE
+                    val isSplitVisible = state.activeTab == WebRunnerTab.SPLIT
 
-                        WebRunnerTab.CONSOLE -> {
-                            WebConsoleView(
-                                logs = state.filteredLogs,
-                                activeFilter = state.logFilter,
-                                searchQuery = state.logSearchQuery,
-                                evalCode = jsEvalCode,
-                                onEvalCodeChange = { jsEvalCode = it },
-                                onExecuteEval = { code ->
-                                    if (code.isNotBlank() && webViewInstance != null) {
+                    // Keep WebPreviewContainer composed so WebView executes background scripts, Brython, and JS
+                    val previewModifier = when {
+                        isPreviewVisible -> Modifier.fillMaxSize()
+                        isSplitVisible -> Modifier.fillMaxWidth(0.55f).fillMaxHeight()
+                        else -> Modifier.size(1.dp).alpha(0f)
+                    }
+
+                    Box(modifier = previewModifier) {
+                        WebPreviewContainer(
+                            viewportMode = if (isSplitVisible) ViewportMode.RESPONSIVE else state.viewportMode,
+                            state = state,
+                            reloadTrigger = reloadTrigger,
+                            onWebViewCreated = { webViewInstance = it },
+                            onProgress = { progress, loading ->
+                                loadProgress = progress
+                                isCurrentlyLoading = loading
+                            },
+                            onJsDialog = { activeJsDialog = it },
+                            onAddLogMessage = onAddLogMessage,
+                            onPageTitleChanged = onPageTitleChanged,
+                            onActiveTabChanged = onActiveTabChanged
+                        )
+                    }
+
+                    if (isConsoleVisible) {
+                        WebConsoleView(
+                            logs = state.filteredLogs,
+                            activeFilter = state.logFilter,
+                            searchQuery = state.logSearchQuery,
+                            evalCode = jsEvalCode,
+                            onEvalCodeChange = { jsEvalCode = it },
+                            onExecuteEval = { code ->
+                                if (code.isNotBlank() && webViewInstance != null) {
+                                    onAddLogMessage(
+                                        WebConsoleMessage(
+                                            level = LogLevel.DEBUG,
+                                            message = "> $code"
+                                        )
+                                    )
+                                    webViewInstance?.evaluateJavascript(code) { result ->
+                                        val cleanResult = if (result == "null" || result == null) "undefined" else result
                                         onAddLogMessage(
                                             WebConsoleMessage(
-                                                level = LogLevel.DEBUG,
-                                                message = "> $code"
+                                                level = LogLevel.RESULT,
+                                                message = "< $cleanResult"
                                             )
                                         )
-                                        webViewInstance?.evaluateJavascript(code) { result ->
-                                            val cleanResult = if (result == "null" || result == null) "undefined" else result
+                                    }
+                                    jsEvalCode = ""
+                                }
+                            },
+                            onFilterChanged = onLogFilterChanged,
+                            onSearchChanged = onLogSearchChanged,
+                            onClearLogs = onClearLogs
+                        )
+                    } else if (isSplitVisible) {
+                        Row(modifier = Modifier.fillMaxSize()) {
+                            Spacer(modifier = Modifier.weight(0.55f))
+                            VerticalDivider()
+                            Box(modifier = Modifier.weight(0.45f).fillMaxHeight()) {
+                                WebConsoleView(
+                                    logs = state.filteredLogs,
+                                    activeFilter = state.logFilter,
+                                    searchQuery = state.logSearchQuery,
+                                    evalCode = jsEvalCode,
+                                    onEvalCodeChange = { jsEvalCode = it },
+                                    onExecuteEval = { code ->
+                                        if (code.isNotBlank() && webViewInstance != null) {
                                             onAddLogMessage(
                                                 WebConsoleMessage(
-                                                    level = LogLevel.RESULT,
-                                                    message = "< $cleanResult"
+                                                    level = LogLevel.DEBUG,
+                                                    message = "> $code"
                                                 )
                                             )
-                                        }
-                                        jsEvalCode = ""
-                                    }
-                                },
-                                onFilterChanged = onLogFilterChanged,
-                                onSearchChanged = onLogSearchChanged,
-                                onClearLogs = onClearLogs
-                            )
-                        }
-
-                        WebRunnerTab.SPLIT -> {
-                            Row(modifier = Modifier.fillMaxSize()) {
-                                Box(
-                                    modifier = Modifier
-                                        .weight(1.2f)
-                                        .fillMaxHeight()
-                                ) {
-                                    WebPreviewContainer(
-                                        viewportMode = ViewportMode.RESPONSIVE,
-                                        state = state,
-                                        reloadTrigger = reloadTrigger,
-                                        onWebViewCreated = { webViewInstance = it },
-                                        onProgress = { progress, loading ->
-                                            loadProgress = progress
-                                            isCurrentlyLoading = loading
-                                        },
-                                        onJsDialog = { activeJsDialog = it },
-                                        onAddLogMessage = onAddLogMessage,
-                                        onPageTitleChanged = onPageTitleChanged
-                                    )
-                                }
-
-                                VerticalDivider()
-
-                                Box(
-                                    modifier = Modifier
-                                        .weight(0.8f)
-                                        .fillMaxHeight()
-                                ) {
-                                    WebConsoleView(
-                                        logs = state.filteredLogs,
-                                        activeFilter = state.logFilter,
-                                        searchQuery = state.logSearchQuery,
-                                        evalCode = jsEvalCode,
-                                        onEvalCodeChange = { jsEvalCode = it },
-                                        onExecuteEval = { code ->
-                                            if (code.isNotBlank() && webViewInstance != null) {
+                                            webViewInstance?.evaluateJavascript(code) { result ->
+                                                val cleanResult = if (result == "null" || result == null) "undefined" else result
                                                 onAddLogMessage(
                                                     WebConsoleMessage(
-                                                        level = LogLevel.DEBUG,
-                                                        message = "> $code"
+                                                        level = LogLevel.RESULT,
+                                                        message = "< $cleanResult"
                                                     )
                                                 )
-                                                webViewInstance?.evaluateJavascript(code) { result ->
-                                                    val cleanResult = if (result == "null" || result == null) "undefined" else result
-                                                    onAddLogMessage(
-                                                        WebConsoleMessage(
-                                                            level = LogLevel.RESULT,
-                                                            message = "< $cleanResult"
-                                                        )
-                                                    )
-                                                }
-                                                jsEvalCode = ""
                                             }
-                                        },
-                                        onFilterChanged = onLogFilterChanged,
-                                        onSearchChanged = onLogSearchChanged,
-                                        onClearLogs = onClearLogs
-                                    )
-                                }
+                                            jsEvalCode = ""
+                                        }
+                                    },
+                                    onFilterChanged = onLogFilterChanged,
+                                    onSearchChanged = onLogSearchChanged,
+                                    onClearLogs = onClearLogs
+                                )
                             }
                         }
                     }
@@ -367,7 +354,7 @@ fun WebRunnerDialog(
                                     activeJsDialog = null
                                 }
                             ) {
-                                Text("Cancel")
+                                Text(strings.cancel)
                             }
                         }
                     )
@@ -410,7 +397,7 @@ fun WebRunnerDialog(
                                     activeJsDialog = null
                                 }
                             ) {
-                                Text("Cancel")
+                                Text(strings.cancel)
                             }
                         }
                     )
@@ -436,6 +423,7 @@ private fun WebRunnerTopBar(
     onOpenInBrowser: () -> Unit,
     onDismiss: () -> Unit
 ) {
+    val strings = LocalAppStrings.current
     Surface(
         color = MaterialTheme.colorScheme.surfaceContainer,
         tonalElevation = 2.dp
@@ -469,10 +457,13 @@ private fun WebRunnerTopBar(
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
+                        val typeName = payload?.analysisResult?.programType?.displayName
+                            ?: payload?.fileType?.displayName
+                            ?: "Web"
                         val subText = if (pageTitle.isNotBlank() && pageTitle != payload?.title) {
-                            "$pageTitle • ${payload?.fileType?.displayName ?: "Web"}"
+                            "$pageTitle • $typeName"
                         } else {
-                            payload?.fileType?.displayName ?: "HTML/CSS/JS"
+                            typeName
                         }
                         Text(
                             text = subText,
@@ -487,13 +478,13 @@ private fun WebRunnerTopBar(
                 // Actions: Reload, Open in Browser, Close
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     IconButton(onClick = onReload) {
-                        Icon(Icons.Default.Refresh, contentDescription = "Reload Page")
+                        Icon(Icons.Default.Refresh, contentDescription = strings.refresh)
                     }
                     IconButton(onClick = onOpenInBrowser) {
-                        Icon(Icons.Default.OpenInBrowser, contentDescription = "Open in External Browser")
+                        Icon(Icons.Default.OpenInBrowser, contentDescription = strings.openInExternalBrowser)
                     }
                     IconButton(onClick = onDismiss) {
-                        Icon(Icons.Default.Close, contentDescription = "Close Runner")
+                        Icon(Icons.Default.Close, contentDescription = strings.close)
                     }
                 }
             }
@@ -514,7 +505,7 @@ private fun WebRunnerTopBar(
                     selected = activeTab == WebRunnerTab.PREVIEW,
                     onClick = { onActiveTabChanged(WebRunnerTab.PREVIEW) },
                     leadingIcon = { Icon(Icons.Default.Visibility, contentDescription = null, modifier = Modifier.size(16.dp)) },
-                    label = { Text("Preview", fontSize = 12.sp) }
+                    label = { Text(strings.preview, fontSize = 12.sp) }
                 )
 
                 FilterChip(
@@ -536,7 +527,7 @@ private fun WebRunnerTopBar(
                         }
                     },
                     label = {
-                        val labelText = if (errorCount > 0) "Console ($errorCount)" else "Console"
+                        val labelText = if (errorCount > 0) "${strings.console} ($errorCount)" else strings.console
                         Text(labelText, fontSize = 12.sp)
                     }
                 )
@@ -545,7 +536,7 @@ private fun WebRunnerTopBar(
                     selected = activeTab == WebRunnerTab.SPLIT,
                     onClick = { onActiveTabChanged(WebRunnerTab.SPLIT) },
                     leadingIcon = { Icon(Icons.Default.VerticalSplit, contentDescription = null, modifier = Modifier.size(16.dp)) },
-                    label = { Text("Split View", fontSize = 12.sp) }
+                    label = { Text(strings.splitView, fontSize = 12.sp) }
                 )
 
                 Spacer(modifier = Modifier.width(8.dp))
@@ -573,7 +564,8 @@ private fun WebPreviewContainer(
     onProgress: (Int, Boolean) -> Unit,
     onJsDialog: (JsDialogState) -> Unit,
     onAddLogMessage: (WebConsoleMessage) -> Unit,
-    onPageTitleChanged: (String) -> Unit
+    onPageTitleChanged: (String) -> Unit,
+    onActiveTabChanged: (WebRunnerTab) -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
     val payload = state.payload
@@ -624,7 +616,8 @@ private fun WebPreviewContainer(
                         val bridge = WebConsoleBridge(
                             scope = coroutineScope,
                             onMessage = { onAddLogMessage(it) },
-                            onTitleChanged = { onPageTitleChanged(it) }
+                            onTitleChanged = { onPageTitleChanged(it) },
+                            onTabSwitchRequested = { onActiveTabChanged(it) }
                         )
                         addJavascriptInterface(bridge, "CLXV11_Bridge")
 
@@ -747,6 +740,7 @@ private fun WebConsoleView(
     onSearchChanged: (String) -> Unit,
     onClearLogs: () -> Unit
 ) {
+    val strings = LocalAppStrings.current
     val listState = rememberLazyListState()
     val dateFormat = remember { SimpleDateFormat("HH:mm:ss.SSS", Locale.getDefault()) }
 
@@ -866,12 +860,12 @@ private fun WebConsoleView(
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "Console is empty",
+                        text = strings.consoleIsEmpty,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 13.sp
                     )
                     Text(
-                        text = "Messages from console.log and errors will appear here.",
+                        text = strings.consoleEmptySub,
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
                         fontSize = 11.sp
                     )

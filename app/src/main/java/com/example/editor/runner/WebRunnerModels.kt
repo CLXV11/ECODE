@@ -53,7 +53,13 @@ data class WebRunnerPayload(
     val fileType: WebFileType,
     val htmlToLoad: String,
     val baseUrl: String?,
-    val originalFilePath: String? = null
+    val originalFilePath: String? = null,
+    val analysisResult: ProgramAnalysisResult = ProgramAnalysisResult(
+        programType = ProgramType.HTML_DOCUMENT,
+        rendererType = PreviewRendererType.WEB_RENDERER,
+        explanationEn = "",
+        explanationAr = ""
+    )
 )
 
 /**

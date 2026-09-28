@@ -279,12 +279,18 @@ fun CodeEditorView(
                 }
             }
 
-            // High-precision fast scrollbar handle
-            FastScrollerOverlay(
-                scrollState = verticalScrollState,
-                totalLines = maxOf(1, lineOffsets.size),
-                containerHeightPx = containerHeightPx
-            )
+            // High-precision fast scrollbar handle pinned to the right edge
+            Box(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .align(Alignment.CenterEnd)
+            ) {
+                FastScrollerOverlay(
+                    scrollState = verticalScrollState,
+                    totalLines = maxOf(1, lineOffsets.size),
+                    containerHeightPx = containerHeightPx
+                )
+            }
         }
     }
 }
@@ -336,15 +342,16 @@ private fun FastScrollerOverlay(
                 )
             }
     ) {
-        // Fast scroller thumb handle
+        // Fast scroller thumb handle pinned to the edge
         Box(
             modifier = Modifier
+                .align(Alignment.TopEnd)
                 .offset { IntOffset(x = 0, y = thumbOffset.toInt()) }
-                .padding(end = 4.dp)
-                .width(if (isDragging) 10.dp else 6.dp)
+                .padding(end = 3.dp)
+                .width(if (isDragging) 8.dp else 5.dp)
                 .height(with(LocalDensity.current) { thumbHeight.toDp() })
                 .clip(RoundedCornerShape(6.dp))
-                .background(if (isDragging) MaterialTheme.colorScheme.primary else Color.White.copy(alpha = 0.38f))
+                .background(if (isDragging) MaterialTheme.colorScheme.primary else Color.White.copy(alpha = 0.50f))
         )
 
         // Line number badge during fast scrub

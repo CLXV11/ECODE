@@ -926,10 +926,13 @@ class EditorViewModel(application: Application) : AndroidViewModel(application) 
             openTabs = tabManager.openTabs
         )
 
+        val isVisual = payload.analysisResult.programType.isVisualCapable
+        val targetTab = if (isVisual) WebRunnerTab.PREVIEW else WebRunnerTab.CONSOLE
+
         val initialLogs = listOf(
             WebConsoleMessage(
                 level = LogLevel.INFO,
-                message = "Starting ${fileType.displayName} Runner for $fileName..."
+                message = "Starting ${payload.analysisResult.programType.displayName} for $fileName..."
             )
         )
 
@@ -939,7 +942,7 @@ class EditorViewModel(application: Application) : AndroidViewModel(application) 
                     isVisible = true,
                     payload = payload,
                     logs = initialLogs,
-                    activeTab = WebRunnerTab.PREVIEW,
+                    activeTab = targetTab,
                     pageTitle = fileName
                 )
             )
@@ -959,6 +962,9 @@ class EditorViewModel(application: Application) : AndroidViewModel(application) 
                     openTabs = tabManager.openTabs
                 )
 
+                val isVisual = payload.analysisResult.programType.isVisualCapable
+                val targetTab = if (isVisual) WebRunnerTab.PREVIEW else WebRunnerTab.CONSOLE
+
                 _uiState.update {
                     it.copy(
                         webRunnerState = WebRunnerUiState(
@@ -967,10 +973,10 @@ class EditorViewModel(application: Application) : AndroidViewModel(application) 
                             logs = listOf(
                                 WebConsoleMessage(
                                     level = LogLevel.INFO,
-                                    message = "Running ${file.name}..."
+                                    message = "Running ${payload.analysisResult.programType.displayName}: ${file.name}..."
                                 )
                             ),
-                            activeTab = WebRunnerTab.PREVIEW,
+                            activeTab = targetTab,
                             pageTitle = file.name
                         )
                     )
@@ -994,6 +1000,9 @@ class EditorViewModel(application: Application) : AndroidViewModel(application) 
                     openTabs = tabManager.openTabs
                 )
 
+                val isVisual = payload.analysisResult.programType.isVisualCapable
+                val targetTab = if (isVisual) WebRunnerTab.PREVIEW else WebRunnerTab.CONSOLE
+
                 _uiState.update {
                     it.copy(
                         webRunnerState = WebRunnerUiState(
@@ -1002,10 +1011,10 @@ class EditorViewModel(application: Application) : AndroidViewModel(application) 
                             logs = listOf(
                                 WebConsoleMessage(
                                     level = LogLevel.INFO,
-                                    message = "Running external SAF document: $name"
+                                    message = "Running ${payload.analysisResult.programType.displayName}: $name"
                                 )
                             ),
-                            activeTab = WebRunnerTab.PREVIEW,
+                            activeTab = targetTab,
                             pageTitle = name
                         )
                     )

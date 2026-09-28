@@ -21,6 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import com.example.editor.settings.LocalAppStrings
 
 @Composable
 fun NewFileDialog(
@@ -28,6 +29,7 @@ fun NewFileDialog(
     onConfirm: (name: String, isFolder: Boolean) -> Unit,
     onDismiss: () -> Unit
 ) {
+    val strings = LocalAppStrings.current
     var isFolder by remember { mutableStateOf(initialIsFolder) }
     var nameInput by remember { mutableStateOf("") }
     var isError by remember { mutableStateOf(false) }
@@ -38,12 +40,12 @@ fun NewFileDialog(
         when {
             trimmed.isEmpty() -> {
                 isError = true
-                errorMessage = "Name cannot be empty"
+                errorMessage = strings.nameCannotBeEmpty
                 false
             }
             trimmed.contains('/') || trimmed.contains('\\') -> {
                 isError = true
-                errorMessage = "Name cannot contain / or \\"
+                errorMessage = strings.nameCannotContainSlash
                 false
             }
             else -> {
@@ -56,20 +58,20 @@ fun NewFileDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(if (isFolder) "Create New Folder" else "Create New File") },
+        title = { Text(if (isFolder) strings.createNewFolder else strings.createNewFile) },
         text = {
             Column(modifier = Modifier.fillMaxWidth()) {
                 Row(modifier = Modifier.padding(bottom = 8.dp)) {
                     FilterChip(
                         selected = !isFolder,
                         onClick = { isFolder = false },
-                        label = { Text("File") },
+                        label = { Text(strings.fileLabel) },
                         modifier = Modifier.padding(end = 8.dp)
                     )
                     FilterChip(
                         selected = isFolder,
                         onClick = { isFolder = true },
-                        label = { Text("Folder") }
+                        label = { Text(strings.folderLabel) }
                     )
                 }
 
@@ -107,12 +109,12 @@ fun NewFileDialog(
                     }
                 }
             ) {
-                Text("Create")
+                Text(strings.createButton)
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(strings.cancel)
             }
         }
     )

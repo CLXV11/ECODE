@@ -1,5 +1,6 @@
 package com.example.editor.ui.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -35,6 +36,9 @@ import androidx.compose.ui.unit.sp
 
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.LayoutDirection
 
 @Composable
 fun EditorBottomBar(
@@ -52,22 +56,21 @@ fun EditorBottomBar(
 ) {
     val scrollState = rememberScrollState()
 
-    Surface(
-        modifier = modifier
-            .fillMaxWidth()
-            .navigationBarsPadding(),
-        color = MaterialTheme.colorScheme.surfaceContainer,
-        tonalElevation = 3.dp,
-        shape = RoundedCornerShape(topStart = 18.dp, topEnd = 18.dp)
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(48.dp)
-                .horizontalScroll(scrollState)
-                .padding(horizontal = 4.dp),
-            verticalAlignment = Alignment.CenterVertically
+    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+        Surface(
+            modifier = modifier.fillMaxWidth(),
+            color = MaterialTheme.colorScheme.surfaceContainer,
+            tonalElevation = 3.dp,
+            shape = RoundedCornerShape(topStart = 18.dp, topEnd = 18.dp)
         ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp)
+                    .horizontalScroll(scrollState)
+                    .padding(horizontal = 4.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
             // Undo
             IconButton(
                 onClick = onUndo,
@@ -164,9 +167,10 @@ fun EditorBottomBar(
             // Separator
             Box(
                 modifier = Modifier
-                    .fillMaxHeight(0.6f)
+                    .fillMaxHeight(0.5f)
                     .width(1.dp)
-                    .padding(horizontal = 4.dp)
+                    .padding(horizontal = 2.dp)
+                    .background(MaterialTheme.colorScheme.outlineVariant)
             )
 
             // Quick symbols buttons
@@ -196,4 +200,5 @@ fun EditorBottomBar(
             }
         }
     }
+}
 }

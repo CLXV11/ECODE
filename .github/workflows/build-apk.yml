@@ -1,4 +1,4 @@
-name: Build & Release Android APK
+name: Android CI - Build & Release APK
 
 on:
   push:
@@ -14,15 +14,21 @@ on:
   workflow_dispatch:
     inputs:
       build_type:
-        description: 'Build Type (debug or release)'
+        description: 'Build Variant'
         required: true
         default: 'debug'
         type: choice
         options:
           - debug
           - release
+          - both
+      run_tests:
+        description: 'Execute Unit & Robolectric Tests before build'
+        required: false
+        default: true
+        type: boolean
       create_release:
-        description: 'Create a GitHub Release with APK'
+        description: 'Publish GitHub Release (when triggered manually)'
         required: false
         default: false
         type: boolean
@@ -36,9 +42,9 @@ concurrency:
 
 jobs:
   build:
-    name: Build CodeXCroc APK
+    name: Build ECODE APK
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
 
     steps:
       - name: Checkout Repository
@@ -46,59 +52,96 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Set up Java Development Kit (JDK 21)
+      - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '21'
 
-      - name: Setup Gradle
+      - name: Setup Gradle Cache & Toolchain
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: wrapper
+          cache-read-only: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/master' }}
 
-      - name: Make Gradle Executable
+      - name: Grant Execute Permissions to Gradle Wrapper
         run: chmod +x gradlew
 
-      - name: Generate Dummy Debug Keystore
+      - name: Configure Android Debug Keystore
         run: |
-          keytool -genkey -v -keystore debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
           mkdir -p ~/.android
-          cp debug.keystore ~/.android/debug.keystore
+          if [ -f "debug.keystore.base64" ]; then
+            echo "Decoding existing debug.keystore from base64..."
+            base64 -d debug.keystore.base64 > ~/.android/debug.keystore
+            cp ~/.android/debug.keystore ./debug.keystore
+          else
+            echo "Generating fresh standard Android debug keystore..."
+            keytool -genkey -v \
+              -keystore ~/.android/debug.keystore \
+              -storepass android \
+              -alias androiddebugkey \
+              -keypass android \
+              -keyalg RSA \
+              -keysize 2048 \
+              -validity 10000 \
+              -dname "CN=Android Debug,O=Android,C=US"
+            cp ~/.android/debug.keystore ./debug.keystore
+          fi
+
+      - name: Run Unit & JVM Tests
+        if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.run_tests == 'true' }}
+        run: ./gradlew :app:testDebugUnitTest --no-daemon -Djava.awt.headless=true
 
       - name: Build Debug APK
-        if: ${{ github.event.inputs.build_type != 'release' }}
+        if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.build_type == 'debug' || github.event.inputs.build_type == 'both' }}
         run: ./gradlew :app:assembleDebug --no-daemon -Djava.awt.headless=true
 
       - name: Build Release APK
-        if: ${{ github.event.inputs.build_type == 'release' }}
+        if: ${{ github.event.inputs.build_type == 'release' || github.event.inputs.build_type == 'both' }}
         run: ./gradlew :app:assembleRelease --no-daemon -Djava.awt.headless=true
 
-      - name: Prepare APK Artifacts
-        id: prepare_apk
+      - name: Collect & Stage APK Artifacts
+        id: stage_artifacts
         run: |
-          mkdir -p output_apks
+          mkdir -p dist
+          
+          # Collect debug APK
           if [ -d "app/build/outputs/apk/debug" ]; then
-            find app/build/outputs/apk/debug -name "*.apk" -exec cp {} output_apks/CodeXCroc-debug.apk \;
+            find app/build/outputs/apk/debug -name "*.apk" -exec cp {} dist/ECODE-debug.apk \;
           fi
+          
+          # Collect release APK if generated
           if [ -d "app/build/outputs/apk/release" ]; then
-            find app/build/outputs/apk/release -name "*.apk" -exec cp {} output_apks/CodeXCroc-release.apk \;
+            find app/build/outputs/apk/release -name "*.apk" -exec cp {} dist/ECODE-release.apk \;
           fi
-          echo "Listing output APKs:"
-          ls -la output_apks/
+          
+          # Generate SHA-256 checksums
+          cd dist
+          if ls *.apk 1> /dev/null 2>&1; then
+            sha256sum *.apk > SHA256SUMS.txt
+            echo "Staged Artifacts:"
+            ls -lh
+            cat SHA256SUMS.txt
+          else
+            echo "Error: No APK files found in output directories!"
+            exit 1
+          fi
 
-      - name: Upload APK Artifact
+      - name: Upload APK Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: CodeXCroc-APK
-          path: output_apks/*.apk
+          name: ECODE-Android-APK
+          path: dist/*
           retention-days: 14
+          if-no-files-found: error
 
-      - name: Publish GitHub Release
-        if: ${{ startsWith(github.ref, 'refs/tags/v') || github.event.inputs.create_release == true }}
+      - name: Create GitHub Release
+        if: ${{ startsWith(github.ref, 'refs/tags/v') || github.event.inputs.create_release == 'true' }}
         uses: softprops/action-gh-release@v2
         with:
-          files: output_apks/*.apk
+          files: |
+            dist/*.apk
+            dist/SHA256SUMS.txt
           generate_release_notes: true
           draft: false
           prerelease: false

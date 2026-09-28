@@ -1,10 +1,13 @@
 package com.example.editor.ui
 
 import android.content.Intent
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.layout.Box
@@ -17,12 +20,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.AutoFixHigh
+import androidx.compose.material.icons.filled.Code
 import androidx.compose.material.icons.filled.Keyboard
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Save
+import androidx.compose.ui.draw.clip
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -36,6 +42,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -137,6 +144,8 @@ fun EditorScreen(
             viewModel.dismissError()
         }
     }
+
+    val strings = LocalAppStrings.current
 
     // Determine syntax theme
     val isSystemDark = isSystemInDarkTheme()
@@ -252,6 +261,14 @@ fun EditorScreen(
             )
         }
     ) {
+        BackHandler(enabled = drawerState.isOpen || uiState.isSearchVisible || uiState.webRunnerState.isVisible) {
+            when {
+                drawerState.isOpen -> coroutineScope.launch { drawerState.close() }
+                uiState.isSearchVisible -> viewModel.toggleSearch(false)
+                uiState.webRunnerState.isVisible -> viewModel.dismissWebRunner()
+            }
+        }
+
         Scaffold(
             modifier = modifier.fillMaxSize().editorKeyboardShortcuts(shortcutActions),
             topBar = {
@@ -259,46 +276,61 @@ fun EditorScreen(
                     windowInsets = WindowInsets.statusBars.union(WindowInsets.displayCutout),
                     title = {
                         Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(horizontal = 4.dp)
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            if (activeTab != null) {
-                                LanguageIcon(
-                                    iconDef = activeLanguage.icon,
-                                    size = 20.dp
-                                )
-                                Spacer(modifier = Modifier.width(8.dp))
-                            }
-
-                            Text(
-                                text = activeTab?.title ?: "CodeXCroc",
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                                modifier = Modifier.weight(1f, fill = false)
+                            Icon(
+                                imageVector = Icons.Default.Code,
+                                contentDescription = "ECODE",
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(24.dp)
                             )
 
-                            if (activeTab != null) {
-                                Spacer(modifier = Modifier.width(8.dp))
-                                FilterChip(
-                                    selected = false,
-                                    onClick = { viewModel.setShowLanguageDialog(true) },
-                                    leadingIcon = {
-                                        LanguageIcon(
-                                            iconDef = activeLanguage.icon,
-                                            size = 14.dp
-                                        )
-                                    },
-                                    label = {
-                                        Text(
-                                            text = activeLanguage.name,
-                                            fontSize = 11.sp,
-                                            maxLines = 1
-                                        )
-                                    },
-                                    modifier = Modifier.testTag("language_selector_chip")
-                                )
+                            Spacer(modifier = Modifier.width(8.dp))
+
+                            Text(
+                                text = "ECODE",
+                                fontSize = 17.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+
+                            Spacer(modifier = Modifier.width(8.dp))
+
+                            // Interactive language switcher chip with badge and dropdown arrow
+                            Surface(
+                                onClick = { viewModel.setShowLanguageDialog(true) },
+                                shape = RoundedCornerShape(12.dp),
+                                color = MaterialTheme.colorScheme.surfaceVariant,
+                                modifier = Modifier
+                                    .testTag("language_selector_chip")
+                                    .widthIn(max = 140.dp)
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                                ) {
+                                    LanguageIcon(
+                                        iconDef = activeLanguage.icon,
+                                        size = 18.dp
+                                    )
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Text(
+                                        text = activeLanguage.name,
+                                        fontSize = 12.sp,
+                                        fontWeight = FontWeight.SemiBold,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        modifier = Modifier.weight(1f, fill = false)
+                                    )
+                                    Spacer(modifier = Modifier.width(2.dp))
+                                    Icon(
+                                        imageVector = Icons.Default.ArrowDropDown,
+                                        contentDescription = "Switch Language",
+                                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        modifier = Modifier.size(18.dp)
+                                    )
+                                }
                             }
                         }
                     },
@@ -311,7 +343,7 @@ fun EditorScreen(
                             },
                             modifier = Modifier.testTag("drawer_menu_button")
                         ) {
-                            Icon(Icons.Default.Menu, contentDescription = "Open Drawer")
+                            Icon(Icons.Default.Menu, contentDescription = strings.openDrawer)
                         }
                     },
                     actions = {
@@ -323,7 +355,7 @@ fun EditorScreen(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.PlayArrow,
-                                contentDescription = "Run Web Preview",
+                                contentDescription = strings.runPreview,
                                 tint = if (isWebRunnable) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
@@ -333,7 +365,7 @@ fun EditorScreen(
                             onClick = { viewModel.formatCurrentCode() },
                             modifier = Modifier.testTag("format_code_button")
                         ) {
-                            Icon(Icons.Default.AutoFixHigh, contentDescription = "Format Code")
+                            Icon(Icons.Default.AutoFixHigh, contentDescription = strings.formatCode)
                         }
 
                         // Save file button
@@ -341,7 +373,7 @@ fun EditorScreen(
                             onClick = { viewModel.saveActiveFile() },
                             modifier = Modifier.testTag("save_file_button")
                         ) {
-                            Icon(Icons.Default.Save, contentDescription = "Save File")
+                            Icon(Icons.Default.Save, contentDescription = strings.saveFile)
                         }
 
                         // Overflow menu
@@ -350,7 +382,7 @@ fun EditorScreen(
                                 onClick = { topMenuExpanded = true },
                                 modifier = Modifier.testTag("top_menu_overflow")
                             ) {
-                                Icon(Icons.Default.MoreVert, contentDescription = "More")
+                                Icon(Icons.Default.MoreVert, contentDescription = strings.moreOptions)
                             }
 
                             DropdownMenu(
@@ -359,7 +391,7 @@ fun EditorScreen(
                                 shape = RoundedCornerShape(20.dp)
                             ) {
                                 DropdownMenuItem(
-                                    text = { Text("Run / Preview Code") },
+                                    text = { Text(strings.runPreview) },
                                     leadingIcon = { Icon(Icons.Default.PlayArrow, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
                                     onClick = {
                                         topMenuExpanded = false
@@ -368,7 +400,7 @@ fun EditorScreen(
                                 )
                                 if (activeTab != null) {
                                     DropdownMenuItem(
-                                        text = { Text("Rename File") },
+                                        text = { Text(strings.renameFile) },
                                         onClick = {
                                             topMenuExpanded = false
                                             viewModel.requestRenameActiveFile()
@@ -376,28 +408,28 @@ fun EditorScreen(
                                     )
                                 }
                                 DropdownMenuItem(
-                                    text = { Text("New External File (SAF)") },
+                                    text = { Text(strings.newExternalFile) },
                                     onClick = {
                                         topMenuExpanded = false
                                         createDocumentLauncher.launch("untitled.txt")
                                     }
                                 )
                                 DropdownMenuItem(
-                                    text = { Text("File Properties") },
+                                    text = { Text(strings.fileProperties) },
                                     onClick = {
                                         topMenuExpanded = false
                                         viewModel.setShowFilePropertiesDialog(true)
                                     }
                                 )
                                 DropdownMenuItem(
-                                    text = { Text("Settings") },
+                                    text = { Text(strings.settings) },
                                     onClick = {
                                         topMenuExpanded = false
                                         viewModel.setShowSettingsDialog(true)
                                     }
                                 )
                                 DropdownMenuItem(
-                                    text = { Text("Keyboard Shortcuts") },
+                                    text = { Text(strings.shortcuts) },
                                     leadingIcon = {
                                         Icon(
                                             Icons.Default.Keyboard,
@@ -411,7 +443,7 @@ fun EditorScreen(
                                     }
                                 )
                                 DropdownMenuItem(
-                                    text = { Text("Share Code") },
+                                    text = { Text(strings.shareCode) },
                                     onClick = {
                                         topMenuExpanded = false
                                         val content = uiState.editorValue.text
@@ -419,11 +451,11 @@ fun EditorScreen(
                                             putExtra(Intent.EXTRA_TEXT, content)
                                             type = "text/plain"
                                         }
-                                        context.startActivity(Intent.createChooser(sendIntent, "Share Code"))
+                                        context.startActivity(Intent.createChooser(sendIntent, strings.shareCode))
                                     }
                                 )
                                 DropdownMenuItem(
-                                    text = { Text("Close Current Tab") },
+                                    text = { Text(strings.closeTab) },
                                     onClick = {
                                         topMenuExpanded = false
                                         viewModel.requestCloseTab(uiState.activeTabIndex)
@@ -535,20 +567,6 @@ fun EditorScreen(
                     activeSearchRangeIndex = uiState.activeMatchIndex,
                     shortcutActions = shortcutActions,
                     modifier = Modifier.weight(1f)
-                )
-
-                // Editor Bottom Accessory Bar (Undo, Redo, Tab, Indent, Symbols)
-                EditorBottomBar(
-                    canUndo = uiState.canUndo,
-                    canRedo = uiState.canRedo,
-                    onUndo = { viewModel.undo() },
-                    onRedo = { viewModel.redo() },
-                    onTab = { viewModel.insertTab() },
-                    onIndent = { viewModel.indentSelection() },
-                    onOutdent = { viewModel.dedentSelection() },
-                    onInsertSymbol = { sym -> viewModel.insertSymbol(sym) },
-                    onSearchClick = { viewModel.toggleSearch(true) },
-                    onGoToLineClick = { viewModel.setShowGoToLineDialog(true) }
                 )
             }
         }

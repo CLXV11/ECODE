@@ -28,6 +28,17 @@ class EditorEngineTest {
         assertEquals("json", LanguageRegistry.detectLanguage("data.json").id)
         assertEquals("markdown", LanguageRegistry.detectLanguage("README.md").id)
         assertEquals("sql", LanguageRegistry.detectLanguage("queries.sql").id)
+        assertEquals("clojure", LanguageRegistry.detectLanguage("core.clj").id)
+        assertEquals("zig", LanguageRegistry.detectLanguage("main.zig").id)
+        assertEquals("nim", LanguageRegistry.detectLanguage("app.nim").id)
+        assertEquals("crystal", LanguageRegistry.detectLanguage("server.cr").id)
+        assertEquals("solidity", LanguageRegistry.detectLanguage("Token.sol").id)
+        assertEquals("fsharp", LanguageRegistry.detectLanguage("Program.fs").id)
+        assertEquals("ocaml", LanguageRegistry.detectLanguage("main.ml").id)
+        assertEquals("fortran", LanguageRegistry.detectLanguage("calc.f90").id)
+        assertEquals("cobol", LanguageRegistry.detectLanguage("payroll.cbl").id)
+        assertEquals("d", LanguageRegistry.detectLanguage("app.d").id)
+        assertEquals("ballerina", LanguageRegistry.detectLanguage("service.bal").id)
     }
 
     @Test

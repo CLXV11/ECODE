@@ -840,6 +840,250 @@ object LanguageRegistry {
         lineCommentPrefixes = listOf("#")
     )
 
+    val CLOJURE = LanguageDefinition(
+        id = "clojure",
+        name = "Clojure",
+        extensions = listOf("clj", "cljs", "cljc", "edn"),
+        icon = LanguageIcons.CLOJURE,
+        mimeTypes = listOf("application/clojure", "text/x-clojure"),
+        keywords = setOf(
+            "def", "defn", "defn-", "defmacro", "defmulti", "defmethod", "defprotocol",
+            "defrecord", "deftype", "let", "fn", "if", "when", "when-not", "when-let",
+            "if-let", "cond", "case", "loop", "recur", "quote", "var", "do", "throw",
+            "try", "catch", "finally", "ns", "require", "use", "import", "in-ns"
+        ),
+        types = setOf("String", "Long", "Double", "Boolean", "Object", "Class"),
+        builtins = setOf(
+            "println", "prn", "print", "str", "count", "first", "rest", "cons", "conj",
+            "map", "filter", "reduce", "assoc", "dissoc", "get", "update", "vector",
+            "hash-map", "hash-set", "concat", "into", "empty?", "nil?", "true?", "false?"
+        ),
+        constants = setOf("nil", "true", "false"),
+        lineCommentPrefixes = listOf(";"),
+        stringDelimiters = listOf("\"")
+    )
+
+    val ZIG = LanguageDefinition(
+        id = "zig",
+        name = "Zig",
+        extensions = listOf("zig", "zon"),
+        icon = LanguageIcons.ZIG,
+        mimeTypes = listOf("text/x-zig"),
+        keywords = setOf(
+            "fn", "const", "var", "pub", "struct", "enum", "union", "error", "while",
+            "for", "if", "else", "switch", "return", "defer", "errdefer", "try",
+            "catch", "orelse", "unreachable", "test", "inline", "comptime", "export",
+            "extern", "usingnamespace", "break", "continue", "asm", "volatile", "threadlocal"
+        ),
+        types = setOf(
+            "u8", "u16", "u32", "u64", "u128", "usize", "i8", "i16", "i32", "i64", "i128",
+            "isize", "f16", "f32", "f64", "f128", "bool", "void", "noreturn", "type",
+            "anyerror", "anyopaque"
+        ),
+        constants = setOf("true", "false", "null", "undefined"),
+        lineCommentPrefixes = listOf("//"),
+        stringDelimiters = listOf("\"", "\\\\")
+    )
+
+    val NIM = LanguageDefinition(
+        id = "nim",
+        name = "Nim",
+        extensions = listOf("nim", "nims", "nimble"),
+        icon = LanguageIcons.NIM,
+        mimeTypes = listOf("text/x-nim"),
+        keywords = setOf(
+            "proc", "func", "method", "iterator", "macro", "template", "var", "let",
+            "const", "type", "if", "elif", "else", "while", "for", "in", "case", "of",
+            "return", "discard", "import", "export", "from", "include", "try", "except",
+            "finally", "raise", "defer", "block", "break", "continue", "when", "asm"
+        ),
+        types = setOf(
+            "int", "int8", "int16", "int32", "int64", "uint", "uint8", "uint16", "uint32",
+            "uint64", "float", "float32", "float64", "string", "bool", "char", "seq",
+            "array", "tuple", "object", "ref", "ptr", "auto"
+        ),
+        constants = setOf("true", "false", "nil"),
+        lineCommentPrefixes = listOf("#"),
+        stringDelimiters = listOf("\"\"\"", "\""),
+        supportsColonIndent = true
+    )
+
+    val CRYSTAL = LanguageDefinition(
+        id = "crystal",
+        name = "Crystal",
+        extensions = listOf("cr"),
+        icon = LanguageIcons.CRYSTAL,
+        mimeTypes = listOf("text/x-crystal"),
+        keywords = setOf(
+            "def", "end", "class", "module", "struct", "enum", "if", "elsif", "else",
+            "unless", "while", "until", "loop", "break", "next", "return", "yield",
+            "rescue", "ensure", "begin", "require", "include", "extend", "abstract",
+            "alias", "annotation", "asm", "case", "when", "macro", "pointerof", "sizeof",
+            "instance_sizeof", "typeof", "lib", "out", "fun", "uninitialized", "select"
+        ),
+        types = setOf(
+            "Int8", "Int16", "Int32", "Int64", "UInt8", "UInt16", "UInt32", "UInt64",
+            "Float32", "Float64", "String", "Bool", "Char", "Array", "Hash", "Nil",
+            "Symbol", "Tuple", "NamedTuple"
+        ),
+        constants = setOf("true", "false", "nil", "self"),
+        lineCommentPrefixes = listOf("#"),
+        stringDelimiters = listOf("\"", "'")
+    )
+
+    val SOLIDITY = LanguageDefinition(
+        id = "solidity",
+        name = "Solidity",
+        extensions = listOf("sol"),
+        icon = LanguageIcons.SOLIDITY,
+        mimeTypes = listOf("text/x-solidity"),
+        keywords = setOf(
+            "contract", "interface", "library", "is", "function", "modifier", "event",
+            "error", "struct", "enum", "mapping", "public", "private", "internal",
+            "external", "pure", "view", "payable", "returns", "return", "require",
+            "revert", "assert", "emit", "if", "else", "for", "while", "do", "break",
+            "continue", "try", "catch", "new", "delete", "override", "virtual",
+            "memory", "storage", "calldata", "constructor", "fallback", "receive"
+        ),
+        types = setOf(
+            "address", "bool", "string", "bytes", "bytes1", "bytes4", "bytes32",
+            "uint", "uint8", "uint16", "uint32", "uint64", "uint128", "uint256",
+            "int", "int8", "int16", "int32", "int64", "int128", "int256"
+        ),
+        constants = setOf("msg", "block", "tx", "this", "true", "false", "abi"),
+        lineCommentPrefixes = listOf("//"),
+        blockCommentStart = "/*",
+        blockCommentEnd = "*/",
+        stringDelimiters = listOf("\"", "'")
+    )
+
+    val FSHARP = LanguageDefinition(
+        id = "fsharp",
+        name = "F#",
+        extensions = listOf("fs", "fsi", "fsx"),
+        icon = LanguageIcons.FSHARP,
+        mimeTypes = listOf("text/x-fsharp"),
+        keywords = setOf(
+            "let", "rec", "mutable", "type", "module", "open", "match", "with",
+            "if", "then", "else", "elif", "function", "fun", "member", "val",
+            "new", "inherit", "interface", "abstract", "default", "override",
+            "async", "task", "try", "finally", "use", "do", "yield", "return",
+            "namespace", "static", "inline"
+        ),
+        types = setOf("int", "int64", "float", "string", "bool", "unit", "list", "array", "option", "seq", "Result"),
+        constants = setOf("true", "false", "null"),
+        lineCommentPrefixes = listOf("//"),
+        blockCommentStart = "(*",
+        blockCommentEnd = "*)",
+        stringDelimiters = listOf("\"\"\"", "\"")
+    )
+
+    val OCAML = LanguageDefinition(
+        id = "ocaml",
+        name = "OCaml",
+        extensions = listOf("ml", "mli"),
+        icon = LanguageIcons.OCAML,
+        mimeTypes = listOf("text/x-ocaml"),
+        keywords = setOf(
+            "let", "rec", "in", "type", "module", "open", "match", "with", "if",
+            "then", "else", "function", "fun", "val", "sig", "struct", "end",
+            "try", "exception", "begin", "and", "as", "class", "constraint",
+            "done", "downto", "for", "inherit", "initializer", "lazy", "method",
+            "mutable", "new", "object", "of", "private", "raise", "to", "virtual", "while"
+        ),
+        types = setOf("int", "float", "string", "bool", "char", "unit", "list", "array", "option", "ref"),
+        constants = setOf("true", "false"),
+        lineCommentPrefixes = emptyList(),
+        blockCommentStart = "(*",
+        blockCommentEnd = "*)",
+        stringDelimiters = listOf("\"", "'")
+    )
+
+    val FORTRAN = LanguageDefinition(
+        id = "fortran",
+        name = "Fortran",
+        extensions = listOf("f90", "f95", "f03", "f08", "f", "for"),
+        icon = LanguageIcons.FORTRAN,
+        mimeTypes = listOf("text/x-fortran"),
+        keywords = setOf(
+            "program", "end", "subroutine", "function", "module", "use", "implicit",
+            "none", "contains", "call", "return", "if", "then", "else", "else if",
+            "endif", "do", "while", "enddo", "select", "case", "allocate", "deallocate",
+            "where", "elsewhere", "endwhere", "cycle", "exit"
+        ),
+        types = setOf("integer", "real", "double precision", "complex", "logical", "character", "type"),
+        constants = setOf(".true.", ".false."),
+        lineCommentPrefixes = listOf("!", "c", "C", "*"),
+        stringDelimiters = listOf("\"", "'")
+    )
+
+    val COBOL = LanguageDefinition(
+        id = "cobol",
+        name = "COBOL",
+        extensions = listOf("cbl", "cob", "cpy"),
+        icon = LanguageIcons.COBOL,
+        mimeTypes = listOf("text/x-cobol"),
+        keywords = setOf(
+            "identification", "division", "program-id", "environment", "configuration",
+            "section", "input-output", "file-control", "data", "file", "working-storage",
+            "linkage", "procedure", "perform", "thru", "through", "until", "varying",
+            "if", "else", "end-if", "move", "to", "display", "stop", "run", "pic",
+            "picture", "value", "values", "comp", "comp-3", "evaluate", "when",
+            "end-evaluate", "compute", "add", "subtract", "multiply", "divide"
+        ),
+        types = setOf("pic", "picture", "comp", "comp-3", "usage"),
+        lineCommentPrefixes = listOf("*>"),
+        stringDelimiters = listOf("\"", "'")
+    )
+
+    val D_LANG = LanguageDefinition(
+        id = "d",
+        name = "D",
+        extensions = listOf("d", "di"),
+        icon = LanguageIcons.D_LANG,
+        mimeTypes = listOf("text/x-d"),
+        keywords = setOf(
+            "auto", "bool", "byte", "cast", "catch", "class", "const", "continue",
+            "debug", "default", "delegate", "delete", "deprecated", "do", "double",
+            "else", "enum", "export", "extern", "false", "final", "finally", "float",
+            "for", "foreach", "function", "goto", "if", "immutable", "import", "in",
+            "inout", "int", "interface", "invariant", "is", "mixin", "module", "new",
+            "nothrow", "null", "out", "override", "package", "pragma", "private",
+            "protected", "public", "pure", "real", "ref", "return", "scope", "shared",
+            "short", "static", "struct", "super", "switch", "synchronized", "template",
+            "this", "throw", "true", "try", "typeid", "typeof", "ubyte", "uint",
+            "ulong", "union", "unittest", "ushort", "version", "void", "while", "with"
+        ),
+        types = setOf(
+            "int", "uint", "long", "ulong", "short", "ushort", "byte", "ubyte",
+            "float", "double", "real", "char", "wchar", "dchar", "bool", "void", "string"
+        ),
+        constants = setOf("true", "false", "null"),
+        lineCommentPrefixes = listOf("//"),
+        blockCommentStart = "/*",
+        blockCommentEnd = "*/",
+        stringDelimiters = listOf("\"", "`")
+    )
+
+    val BALLERINA = LanguageDefinition(
+        id = "ballerina",
+        name = "Ballerina",
+        extensions = listOf("bal"),
+        icon = LanguageIcons.BALLERINA,
+        mimeTypes = listOf("text/x-ballerina"),
+        keywords = setOf(
+            "function", "returns", "public", "private", "isolated", "remote",
+            "resource", "service", "client", "type", "record", "error", "if",
+            "else", "while", "foreach", "in", "match", "check", "checkpanic",
+            "trap", "return", "var", "const", "final", "import", "worker",
+            "fork", "wait", "panic", "retry", "transaction", "commit", "rollback"
+        ),
+        types = setOf("int", "float", "decimal", "string", "boolean", "xml", "json", "byte", "table", "map", "any", "anydata"),
+        constants = setOf("true", "false", "null"),
+        lineCommentPrefixes = listOf("//"),
+        stringDelimiters = listOf("\"")
+    )
+
     val PLAIN_TEXT = LanguageDefinition.PLAIN_TEXT
 
     /**
@@ -850,8 +1094,10 @@ object LanguageRegistry {
         JSON, XML, KOTLIN, JAVA, C, CPP, CSHARP, GO, RUST, SWIFT, DART,
         PHP, RUBY, LUA, R, PERL, SHELL, POWERSHELL, SQL, YAML, TOML,
         MARKDOWN, OBJECTIVE_C, OBJECTIVE_CPP, SCALA, GROOVY, HASKELL,
-        ELIXIR, ERLANG, ASSEMBLY, MAKEFILE, DOCKERFILE, GRADLE, INI,
-        PROPERTIES, CSV, GRAPHQL, VUE, SVELTE, ASTRO, JULIA, LATEX, GIT, PLAIN_TEXT
+        ELIXIR, ERLANG, CLOJURE, ZIG, NIM, CRYSTAL, SOLIDITY, FSHARP,
+        OCAML, FORTRAN, COBOL, D_LANG, BALLERINA, ASSEMBLY, MAKEFILE,
+        DOCKERFILE, GRADLE, INI, PROPERTIES, CSV, GRAPHQL, VUE, SVELTE,
+        ASTRO, JULIA, LATEX, GIT, PLAIN_TEXT
     )
 
     private val extensionMap: Map<String, LanguageDefinition> by lazy {
@@ -916,6 +1162,9 @@ object LanguageRegistry {
             ".dockerignore" -> return DOCKERFILE
             "gemfile", "rakefile" -> return RUBY
             "cmakelists.txt" -> return MAKEFILE
+            "build.zig" -> return ZIG
+            "project.clj", "deps.edn" -> return CLOJURE
+            "ballerina.toml" -> return BALLERINA
         }
 
         // 3. MIME Type detection
@@ -978,6 +1227,15 @@ object LanguageRegistry {
             }
             if (sample.startsWith("---") && sample.contains(": ")) {
                 return YAML
+            }
+            if (sample.contains("pragma solidity")) {
+                return SOLIDITY
+            }
+            if (sample.contains("(ns ") || sample.contains("(defn ")) {
+                return CLOJURE
+            }
+            if (sample.contains("pub fn main(") || sample.contains("@import(\"std\")")) {
+                return ZIG
             }
         }
 

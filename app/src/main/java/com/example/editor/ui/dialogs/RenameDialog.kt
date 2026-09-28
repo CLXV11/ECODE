@@ -15,6 +15,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
+import com.example.editor.settings.LocalAppStrings
 
 @Composable
 fun RenameDialog(
@@ -22,12 +23,13 @@ fun RenameDialog(
     onConfirm: (String) -> Unit,
     onDismiss: () -> Unit
 ) {
+    val strings = LocalAppStrings.current
     var nameInput by remember { mutableStateOf(initialName) }
     var isError by remember { mutableStateOf(false) }
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Rename") },
+        title = { Text(strings.renameItemTitle) },
         text = {
             Column(modifier = Modifier.fillMaxWidth()) {
                 OutlinedTextField(
@@ -58,12 +60,12 @@ fun RenameDialog(
                     }
                 }
             ) {
-                Text("Rename")
+                Text(strings.renameFile)
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(strings.cancel)
             }
         }
     )

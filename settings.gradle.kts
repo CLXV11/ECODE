@@ -22,6 +22,6 @@ dependencyResolutionManagement {
   }
 }
 
-rootProject.name = "CodeXCroc"
+rootProject.name = "ECODE"
 
 include(":app")

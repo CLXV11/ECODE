@@ -1,224 +1,219 @@
-<div align="center">
+# ECODE
 
-# 🐊 CodeXCroc
-### Next-Generation Android Code Editor & Mobile IDE
-**محرر أكواد متقدم وبيئة تطوير برمجية متكاملة وفائقة السرعة لنظام أندرويد**
+> Native Android Code Editor & Mobile IDE engine built with Kotlin and Jetpack Compose.
 
-[![Android Build](https://img.shields.io/badge/Android-SDK%2024%20..%2036-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://developer.android.com)
-[![Kotlin](https://img.shields.io/badge/Kotlin-2.0+-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white)](https://kotlinlang.org)
-[![Jetpack Compose](https://img.shields.io/badge/UI-Jetpack%20Compose%20M3-4285F4?style=for-the-badge&logo=jetpackcompose&logoColor=white)](https://developer.android.com/jetpack/compose)
-[![GitHub Actions](https://img.shields.io/badge/CI%2FCD-Automated%20APK%20Build-2088FF?style=for-the-badge&logo=githubactions&logoColor=white)](.github/workflows/build-apk.yml)
-[![Theme](https://img.shields.io/badge/AMOLED-Pitch%20Black%20%23000000-000000?style=for-the-badge&logo=visualstudiocode&logoColor=white)](#-visual-themes--pitch-black-amoled)
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg?style=for-the-badge)](LICENSE)
-
-<p align="center">
-  <a href="#-features--الميزات-الرئيسية">Features</a> •
-  <a href="#-quick-start--التشغيل-السريع">Quick Start</a> •
-  <a href="#-github-actions-apk-workflow">CI/CD APK Workflow</a> •
-  <a href="#-architecture--البنية-البرمجية">Architecture</a> •
-  <a href="#-supported-languages">Languages</a> •
-  <a href="#-keyboard-shortcuts">Shortcuts</a>
-</p>
+[![Platform](https://img.shields.io/badge/Platform-Android%207.0+%20(API%2024--36)-2C3437?style=flat-square&logo=android&logoColor=3DDC84)](https://developer.android.com)
+[![Language](https://img.shields.io/badge/Language-Kotlin%202.0-2C3437?style=flat-square&logo=kotlin&logoColor=7F52FF)](https://kotlinlang.org)
+[![UI Framework](https://img.shields.io/badge/UI-Jetpack%20Compose%20M3-2C3437?style=flat-square&logo=jetpackcompose&logoColor=4285F4)](https://developer.android.com/jetpack/compose)
+[![CI/CD](https://img.shields.io/badge/CI%2FCD-GitHub%20Actions%20APK%20Pipeline-2C3437?style=flat-square&logo=githubactions&logoColor=2088FF)](.github/workflows/build-apk.yml)
+[![Theme](https://img.shields.io/badge/Display-AMOLED%20Black%20%23000000-2C3437?style=flat-square)](#visual-themes)
+[![License](https://img.shields.io/badge/License-Apache%202.0-2C3437?style=flat-square)](LICENSE)
 
 ---
 
-</div>
+## Technical Specifications
 
-## 🌟 Overview | نظرة عامة
-
-**CodeXCroc** هو محرر أكواد برمجية احترافي وعالي الأداء تم بناؤه بالكامل بنظام **Native Android** باستخدام **Kotlin** و **Jetpack Compose (Material Design 3)**. صُمم خصيصاً للمبرمجين، ومطوري الويب، والباحثين، والطلاب الذين يحتاجون إلى تجربة برمجة حقيقية وسلسة مباشرة من هواتفهم وأجهزتهم اللوحية، دون أي تنازلات في السرعة أو جودة العرض.
-
-> **CodeXCroc** is a lightning-fast, production-grade native Android code editor and mobile IDE built from the ground up with Kotlin and Jetpack Compose. Engineered for programmers, web developers, and competitive coders who demand desktop-class editing responsiveness on mobile devices.
-
----
-
-## ✨ Features | الميزات الرئيسية
-
-### 🚀 Core Capabilities
-* **⚡ Ultra-Fast Multi-Tab Workspace**: تنقل لحظي بين عدة ملفات مبوبة مع حفظ الحالة ونقاط التعديل.
-* **🎨 Precision Syntax Highlighting**: محرك تمييز بصري عالي الدقة مبني عبر Lexer متعدد اللغات (يدعم أكثر من 16 لغة برمجة وتقنية).
-* **🌐 Integrated Live Web Runner & Console Bridge**: مشغل ويب حي ومباشر لملفات HTML و CSS و JavaScript مزود بجسر كونسول فوري (`console.log`, `console.warn`, `console.error`) واعتراض الأخطاء البرمجية.
-* **🖤 Pure Pitch Black (AMOLED) Mode**: وضع أسود مطلق حقيقي (`#000000`) لتوفير استهلاك البطارية على شاشات OLED/AMOLED وتوفير راحة بصرية فائقة أثناء العمل الليلي.
-* **⌨️ Smart Symbol Accessory Bar**: شريط علوي وسفلي ذكي للرموز البرمجية الأكثر استخداماً (`{ }`, `( )`, `[ ]`, `<`, `>`, `;`, `=>`, `=`, `"`, `'`, `/`, `\`, `_`, `|`, `&`, `!`, `?`, `Tab`).
-* **📂 Native Android SAF & Tree Storage**: دعم كامل لنظام Storage Access Framework (SAF) لفتح ملفات أو مجلدات عمل كاملة مباشرة من الذاكرة أو بطاقة SD.
-* **🔍 Advanced Regex Search & Replace**: بحث واستبدال متقدم يدعم التعابير النمطية (Regex)، مطابقة حالة الأحرف، والكلمات الكاملة.
-* **📏 Professional Code Typography**: تحكم دقيق في حجم الخط (`fontSize`), أرقام الأسطر (`Line Numbers`), الالتفاف التلقائي (`Word Wrap`), والمسافات البادئة (`Tab Width`).
-* **💾 Automatic & Instant Saving**: دعم الحفظ التلقائي مع مؤشر التعديل الذكي لضمان عدم ضياع أي سطر برمجي.
+| Parameter | Specification |
+| :--- | :--- |
+| Runtime Environment | Android Runtime (ART), Min SDK 24, Target SDK 36 |
+| Core Language | Kotlin 2.0+ (Strict Type-Safety & Coroutines) |
+| Architecture Pattern | Unidirectional Data Flow (UDF), MVVM, Clean Separation |
+| UI Toolkit | Declarative Jetpack Compose with Material Design 3 |
+| Storage Interface | Android Storage Access Framework (SAF) Documents & Tree Provider |
+| Execution Engine | Local WebKit/WebView runtime with bidirectional JavaScript Bridge |
+| Testing Framework | JVM Unit Tests + Robolectric + KSP |
 
 ---
 
-## 🎨 Visual Themes & Pitch Black AMOLED
+## Community & Direct Developer Channels
 
-| Theme | Background | Text Contrast | Best Suited For |
+Direct links for technical support, feature discussions, and build announcements:
+
+| Channel | Identifier | Direct Access |
+| :--- | :--- | :--- |
+| Telegram | `@EPCD11` | [t.me/EPCD11](https://t.me/EPCD11) |
+| Discord | Community Server | [discord.gg/FkssmYFY](https://discord.gg/FkssmYFY) |
+
+---
+
+## System Architecture
+
+```
+[ Android OS / Linux Kernel ]
+       |
+       v
+[ Jetpack Compose UI Layer ]
+  ├── TopAppBar (Session Info, Language Selector Chip, Action Bar)
+  ├── EditorTabBar (Horizontal Scroll, Dirty State Tracker, Tab Manager)
+  ├── CodeEditorView (Canvas Line Numbers, Syntax Highlight Engine, Caret)
+  ├── SearchReplaceBar (Regex Engine, Case-Match, Token Navigator)
+  ├── EditorBottomBar (Undo/Redo, Indentation Controls, Quick Symbol Bar)
+  └── FileExplorerDrawer (SAF SAF-Tree Provider, Recents Cache, Direct Actions)
+       |
+       v
+[ ViewModel & State Management ]
+  ├── EditorViewModel (StateFlow<EditorUiState>, MVI Event Pipeline)
+  ├── AutoSaveManager (Debounced Background I/O Coroutine)
+  └── ShortcutRegistry (Physical Keyboard KeyEvent Dispatcher)
+       |
+       v
+[ Engine & Business Logic Core ]
+  ├── Lexer & Tokenizer (Multi-language Regex Matcher, Span Formatter)
+  ├── WebRunnerContentBuilder (Payload Compiler, Script Injector)
+  ├── SafStorageManager (Scoped Storage URIs, MIME Resolver)
+  └── WebConsoleBridge (Bidirectional JavaScript Interface, Log Dispatcher)
+```
+
+---
+
+## Functional Capabilities
+
+### Editor Core
+- Lexical syntax highlighter covering more than 16 languages and data formats.
+- Canvas-rendered line number gutter synchronized with vertical scroll offsets.
+- Automatic bracket pairing, delimiter completion, and smart indentation logic.
+- Undo/Redo stack with snapshot compaction and zero memory leak retention.
+- Regex-powered Find and Replace supporting case sensitivity and whole-word toggles.
+
+### Web Runner & Runtime Sandbox
+- Integrated live preview for HTML, CSS, JavaScript, SVG, Markdown, and JSON.
+- Two-way bridge intercepting `console.log`, `console.warn`, and `console.error`.
+- Interactive REPL input bar for real-time JavaScript code evaluation.
+- Responsive viewport toggles: Fullscreen, Desktop, Tablet, and Mobile frames.
+
+### Storage & Android Scoped Storage Access
+- Full compliance with Android Storage Access Framework (SAF).
+- Native support for opening individual documents (`ACTION_OPEN_DOCUMENT`) and entire directory trees (`ACTION_OPEN_DOCUMENT_TREE`).
+- Automatic background file saving with configurable debounce intervals (5s, 10s, 30s, 60s).
+- Encoding detector with UTF-8, UTF-8 BOM, UTF-16, and ASCII identification.
+
+---
+
+## Supported Languages & Formats
+
+```
+[Web & Markup]       HTML (.html, .htm), CSS (.css), SCSS (.scss), Markdown (.md), SVG (.svg)
+[Scripting]          JavaScript (.js, .mjs), TypeScript (.ts, .tsx), Python (.py)
+[Systems & JVM]      Kotlin (.kt, .kts), Java (.java), C (.c, .h), C++ (.cpp, .hpp), Rust (.rs), Go (.go)
+[Query & Config]     SQL (.sql), JSON (.json), XML (.xml), YAML (.yaml, .yml), Shell (.sh, .bash)
+```
+
+---
+
+## Visual Themes
+
+| Identifier | Background | Foreground | Target Use |
 | :--- | :--- | :--- | :--- |
-| **Pitch Black (AMOLED)** | `#000000` | High Dynamic Range | Battery saving, pure contrast, OLED screens |
-| **Monokai Dark** | `#272822` | Vivid Pastel Accents | Long coding sessions, iconic editor feel |
-| **One Dark Pro** | `#21252B` | Balanced Soft Tones | Modern visual aesthetics & readability |
-| **Dracula Night** | `#282A36` | Neon Violet & Pink | High aesthetic vibe, web development |
-| **GitHub Light** | `#FFFFFF` | Clear High Contrast | Daylight environments, documentation reading |
+| `AMOLED` | `#000000` | `#E6EDF3` | Battery optimization on OLED displays, pitch black contrast |
+| `Monokai` | `#272822` | `#F8F8F2` | Classic high-contrast syntax palette |
+| `One Dark Pro` | `#21252B` | `#ABB2BF` | Low-strain dark neutral palette |
+| `Dracula` | `#282A36` | `#F8F8F2` | High-chroma violet and pastel accents |
+| `GitHub Light` | `#FFFFFF` | `#24292F` | High ambient daylight reading |
 
 ---
 
-## 🔤 Supported Languages & Technologies
+## Hardware Keyboard Bindings
 
-يدعم المحرك الداخلي لـ **CodeXCroc** التلوين البرمجي الذكي وحساب الرموز للعديد من اللغات:
-
-```
-├── ☕ Kotlin (.kt, .kts)
-├── ☕ Java (.java)
-├── 🐍 Python (.py)
-├── 🌐 JavaScript (.js, .mjs)
-├── 🔷 TypeScript (.ts, .tsx)
-├── 🌐 HTML5 (.html, .htm)
-├── 🎨 CSS3 / SCSS (.css, .scss)
-├── 🦀 Rust (.rs)
-├── 🐹 Go (.go)
-├── ⚙️ C & C++ (.c, .cpp, .h, .hpp)
-├── 🐘 PHP (.php)
-├── 🗄️ SQL (.sql)
-├── 🐚 Bash / Shell (.sh, .bash)
-├── 📦 JSON / JSON5 (.json)
-├── 📑 Markdown (.md)
-└── 📄 XML / SVG / YAML (.xml, .svg, .yaml, .yml)
-```
+| Shortcut | Target Command |
+| :--- | :--- |
+| `Ctrl + S` | Persist active file to disk / SAF provider |
+| `Ctrl + F` | Toggle Find bar |
+| `Ctrl + H` | Toggle Find and Replace bar |
+| `Ctrl + G` | Open line jump dialog |
+| `Ctrl + W` | Terminate active tab session |
+| `Ctrl + R` | Dispatch code to Web Runner runtime |
+| `Ctrl + Z` | Revert last buffer modification |
+| `Ctrl + Y` | Reapply reverted buffer modification |
+| `Ctrl + ,` | Invoke configuration dialog |
 
 ---
 
-## 🛠️ GitHub Actions: Automated APK Build Workflow
+## Automated CI/CD Pipeline (GitHub Actions)
 
-تم تزويد المستودع بـ CI/CD Workflow متكامل واحترافي عبر **GitHub Actions** لبناء ملفات الـ **APK** آلياً عند كل تحديث أو عبر التشغيل اليدوي.
+A reproducible, containerized build workflow is configured under `.github/workflows/build-apk.yml`.
 
-### 📍 مسار الملف:
-```
-.github/workflows/build-apk.yml
-```
+### Pipeline Triggers
+1. **Push & Pull Requests**: Triggers on `main` and `master` branches.
+2. **Tag Deployments**: Push tags matching `v*` to automatically generate GitHub Releases.
+3. **Manual Dispatch**: Triggered from the Actions tab with configurable build parameters:
+   - Variant selection: `debug`, `release`, or `both`.
+   - Unit test toggle: execute or bypass test suites.
+   - Release creation: direct publishing toggle.
 
-### ⚡ كيفية عمل الـ Workflow:
-1. **Push أو Pull Request**: يقوم بالبناء والتحقق التلقائي وتشغيل كافة الـ Unit Tests واختبارات Robolectric عند كل دمج على فروع `main` أو `master`.
-2. **Release التلقائي**: عند عمل `git tag` بصيغة `v1.0.0`، يقوم الـ Workflow ببناء الـ APK ونشره مباشرة كـ **GitHub Release** مرفق معه التطبيق الجاهز للتحميل.
-3. **التشغيل اليدوي (Workflow Dispatch)**:
-   - افتح تبويب **Actions** في مستودعك على GitHub.
-   - اختر **Build & Release Android APK**.
-   - اضغط على **Run workflow**.
-   - اختر نوع البناء: `debug` أو `release`.
-   - حدد خيار إنشاء Release إن أردت نشره فوراً.
-
-### 📦 تحميل الـ APK من GitHub:
-بمجرد اكتمال مهمة البناء، تجد الـ APK جاهزاً في قسم **Artifacts** باسم `CodeXCroc-APK`.
+### Artifact Outputs
+- Location: GitHub Actions Run Summary -> `Artifacts` -> `ECODE-Android-APK`.
+- Files:
+  - `ECODE-debug.apk`
+  - `ECODE-release.apk` (if release variant enabled)
+  - `SHA256SUMS.txt` (cryptographic integrity verification)
 
 ---
 
-## 🏗️ Architecture & Project Structure | البنية البرمجية
+## Local Build Instructions
 
-يتبع المشروع أحدث مبادئ **Clean Architecture** و **MVVM** مع الفصل التام بين طبقة العرض وطبقة المنطق ومحرك التلوين:
+### Prerequisites
+- JDK 21 (Temurin, OpenJDK, or Zulu)
+- Android SDK with Platform 36 and Build-Tools 36.0.0
+- Linux, macOS, or Windows terminal
 
-```
-CodeXCroc/
-├── .github/
-│   └── workflows/
-│       └── build-apk.yml            # Automated CI/CD Android APK workflow
-├── app/
-│   ├── build.gradle.kts             # Module-level Gradle configuration
-│   └── src/
-│       ├── main/
-│       │   ├── AndroidManifest.xml
-│       │   ├── java/com/example/
-│       │   │   ├── MainActivity.kt   # Edge-to-edge entry point
-│       │   │   └── editor/
-│       │   │       ├── engine/       # Syntax lexer & highlight engine
-│       │   │       ├── io/           # Storage Access Framework & file management
-│       │   │       ├── runner/       # Live HTML/JS runner & console bridge
-│       │   │       ├── settings/     # Preference persistence & themes
-│       │   │       ├── syntax/       # Language registry & definitions
-│       │   │       ├── ui/           # Jetpack Compose Screens & Components
-│       │   │       │   ├── components/  # CodeEditorView, FileDrawer, AccessoryBar
-│       │   │       │   ├── dialogs/     # SettingsDialog, SearchDialog, GoToLine
-│       │   │       │   └── theme/       # Dynamic color schemes & typography
-│       │   │       └── viewmodel/    # EditorViewModel & state management
-│       │   └── res/                  # Icons, drawables, strings
-│       └── test/                     # Robolectric & JVM unit test suites
-├── gradle/
-│   └── wrapper/
-├── gradlew                          # Gradle wrapper executable
-├── gradlew.bat                      # Windows Gradle wrapper
-├── settings.gradle.kts              # Root project configuration
-└── README.md                        # Documentation
-```
-
----
-
-## ⌨️ Productivity Shortcuts | اختصارات لوحة المفاتيح
-
-عند توصيل لوحة مفاتيح خارجية (Physical Keyboard أو Bluetooth Keyboard)، يمكنك الاستفادة من الاختصارات المكتبية التالية:
-
-| الاختصار | الوظيفة | Function |
-| :---: | :--- | :--- |
-| <kbd>Ctrl</kbd> + <kbd>S</kbd> | حفظ الملف النشط | Save Active File |
-| <kbd>Ctrl</kbd> + <kbd>F</kbd> | فتح نافذة البحث | Open Find / Search Dialog |
-| <kbd>Ctrl</kbd> + <kbd>H</kbd> | فتح البحث والاستبدال | Open Replace Dialog |
-| <kbd>Ctrl</kbd> + <kbd>G</kbd> | الانتقال لرقم سطر محدد | Go to Specific Line |
-| <kbd>Ctrl</kbd> + <kbd>W</kbd> | إغلاق التبويب الحالي | Close Active Tab |
-| <kbd>Ctrl</kbd> + <kbd>R</kbd> | تشغيل في مشغل الويب | Run in Live Web Preview |
-| <kbd>Ctrl</kbd> + <kbd>Z</kbd> | تراجع | Undo |
-| <kbd>Ctrl</kbd> + <kbd>Y</kbd> | إعادة | Redo |
-| <kbd>Ctrl</kbd> + <kbd>,</kbd> | فتح الإعدادات | Open Settings |
-
----
-
-## 🚀 Quick Start | البناء والتشغيل محلياً
-
-### المتطلبات الأساسية (Prerequisites)
-* **JDK 21** أو أحدث.
-* **Android Studio Ladybug (2024.2+)** أو أحدث.
-* جهاز يعمل بنظام **Android 7.0 (API 24)** فما فوق.
-
-### أوامر البناء عبر الطرفية (Terminal):
+### Commands
 
 ```bash
-# 1. استنساخ المستودع (Clone Repository)
-git clone https://github.com/amialhnina/CodeXCroc.git
-cd CodeXCroc
+# 1. Clone repository
+git clone https://github.com/amialhnina/ECODE.git
+cd ECODE
 
-# 2. منح صلاحيات التشغيل للـ Gradle Wrapper
+# 2. Grant executable permissions to wrapper
 chmod +x gradlew
 
-# 3. تشغيل حزمة الاختبارات الشاملة (Run Unit & Robolectric Tests)
+# 3. Execute JVM unit and Robolectric test suites
 ./gradlew :app:testDebugUnitTest
 
-# 4. بناء نسخة الـ APK للاختبار (Build Debug APK)
+# 4. Compile debug APK
 ./gradlew :app:assembleDebug
 
-# 5. موقع ملف الـ APK الناتج:
+# 5. Output location
 # app/build/outputs/apk/debug/app-debug.apk
 ```
 
 ---
 
-## 🔒 Security & Privacy | الأمان والخصوصية
+## Project Structure
 
-* **Zero Tracking**: التطبيق لا يجمع أي بيانات شخصية ولا يحتوي على أي متتبعات أو إعلانات.
-* **Local First**: كل الأكواد البرمجية والملفات تُخزن وتُعالج بالكامل على جهازك محلياً داخل بيئة تخزين آمنة.
-* **Storage Access Framework (SAF)**: احترام كامل لمعايير الخصوصية الصارمة لنظام أندرويد عبر استخدام أذونات الملفات المحددة فقط دون طلب صلاحيات وصول واسعة للذاكرة.
+```
+ECODE/
+├── .github/
+│   └── workflows/
+│       └── build-apk.yml            # CI/CD APK build and release pipeline
+├── app/
+│   ├── build.gradle.kts             # Module configuration, dependencies, and APK naming
+│   └── src/
+│       ├── main/
+│       │   ├── AndroidManifest.xml  # Hardware declarations and permissions
+│       │   ├── java/com/example/
+│       │   │   ├── MainActivity.kt   # System window insets & entry point
+│       │   │   └── editor/
+│       │   │       ├── engine/       # Lexical analysis and line gutter calculations
+│       │   │       ├── io/           # SAF documents, trees, encoding detectors
+│       │   │       ├── runner/       # WebView container, bridge, console REPL
+│       │   │       ├── settings/     # Preference Datastore, i18n, themes
+│       │   │       ├── shortcuts/    # Hardware key event mapping
+│       │   │       ├── syntax/       # Language tokens and grammar rules
+│       │   │       └── ui/           # Jetpack Compose screens, dialogs, components
+│       │   └── res/
+│       │       ├── drawable/         # Vector assets (Telegram, Discord, GitHub)
+│       │       └── values/           # Theme resources and string catalogs
+│       └── test/                     # Robolectric and JVM unit tests
+├── gradle/
+│   └── wrapper/                     # Gradle wrapper definitions
+├── gradlew                          # Unix build script
+├── gradlew.bat                      # Windows build script
+├── settings.gradle.kts              # Project structure definitions
+└── README.md                        # Documentation
+```
 
 ---
 
-## 🤝 Contributing | المساهمة
+## License
 
-نرحب بجميع المساهمات لتطوير **CodeXCroc**!
-1. قم بعمل **Fork** للمستودع.
-2. أنشئ فرعاً جديداً لميزتك (`git checkout -b feature/awesome-feature`).
-3. سجّل التعديلات برمز دلالي (`git commit -m "feat: add awesome feature"`).
-4. ارفع الفرع (`git push origin feature/awesome-feature`).
-5. افتح **Pull Request** للمراجعة.
-
----
-
-## 📄 License | الترخيص
-
-هذا المشروع مرخص بموجب رخصة **Apache License 2.0** - انظر ملف [LICENSE](LICENSE) لمزيد من التفاصيل.
-
----
-
-<div align="center">
-  <sub>صُنع بكل فخر وشغف بأيدي عربية لمجتمع المطورين حول العالم 🐊 💻</sub>
-</div>
+This software is released under the **Apache License 2.0**. Refer to the [LICENSE](LICENSE) file for terms and conditions.

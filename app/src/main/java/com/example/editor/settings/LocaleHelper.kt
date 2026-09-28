@@ -16,6 +16,29 @@ import java.util.Locale
  */
 object LocaleHelper {
 
+    fun isSystemArabic(context: Context? = null): Boolean {
+        try {
+            val sysLocales = Resources.getSystem().configuration.locales
+            for (i in 0 until sysLocales.size()) {
+                val lang = sysLocales[i]?.language?.lowercase() ?: ""
+                if (lang == "ar" || lang.startsWith("ar")) return true
+            }
+        } catch (_: Exception) {}
+
+        try {
+            if (context != null) {
+                val appLocales = context.resources.configuration.locales
+                for (i in 0 until appLocales.size()) {
+                    val lang = appLocales[i]?.language?.lowercase() ?: ""
+                    if (lang == "ar" || lang.startsWith("ar")) return true
+                }
+            }
+        } catch (_: Exception) {}
+
+        val defaultLang = Locale.getDefault().language.lowercase()
+        return defaultLang == "ar" || defaultLang.startsWith("ar")
+    }
+
     fun applyLocale(context: Context, languageCode: String) {
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -38,7 +61,9 @@ object LocaleHelper {
             val targetLocale = when (languageCode) {
                 "ar" -> Locale("ar")
                 "en" -> Locale("en")
-                else -> Resources.getSystem().configuration.locales[0] ?: Locale.getDefault()
+                else -> {
+                    if (isSystemArabic(context)) Locale("ar") else Locale("en")
+                }
             }
             Locale.setDefault(targetLocale)
 
@@ -52,14 +77,11 @@ object LocaleHelper {
         }
     }
 
-    fun isRtl(languageCode: String): Boolean {
-        return when (languageCode) {
+    fun isRtl(languageCode: String, context: Context? = null): Boolean {
+        return when (languageCode.lowercase()) {
             "ar" -> true
             "en" -> false
-            else -> {
-                val current = Locale.getDefault().language
-                current == "ar" || current.startsWith("ar_")
-            }
+            else -> isSystemArabic(context)
         }
     }
 }

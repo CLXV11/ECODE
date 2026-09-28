@@ -18,6 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.editor.io.EditorFile
+import com.example.editor.settings.LocalAppStrings
 import com.example.editor.syntax.LanguageDefinition
 import com.example.editor.syntax.LanguageIcon
 import java.text.SimpleDateFormat
@@ -32,6 +33,7 @@ fun FilePropertiesDialog(
     characterCount: Int,
     onDismiss: () -> Unit
 ) {
+    val strings = LocalAppStrings.current
     val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
 
     AlertDialog(
@@ -43,26 +45,26 @@ fun FilePropertiesDialog(
                     size = 24.dp
                 )
                 Spacer(modifier = Modifier.width(10.dp))
-                Text("File Properties", fontWeight = FontWeight.Bold)
+                Text(strings.filePropertiesTitle, fontWeight = FontWeight.Bold)
             }
         },
         text = {
             Column(modifier = Modifier.fillMaxWidth()) {
-                PropertyRow("Name", file.name)
-                PropertyRow("Storage", if (file.isInternalWorkspace) "Internal Workspace" else "External SAF Document")
-                PropertyRow("Path / URI", file.absolutePath ?: file.uri?.toString() ?: "Workspace")
-                PropertyRow("Access Mode", if (file.isReadOnly) "Read-Only" else "Read & Write")
-                PropertyRow("Language", language.name)
-                PropertyRow("Encoding", file.encodingName)
-                PropertyRow("Lines", lineCount.toString())
-                PropertyRow("Characters", characterCount.toString())
-                PropertyRow("Size", formatBytes(file.fileSize))
-                PropertyRow("Modified", dateFormat.format(Date(file.lastModified)))
+                PropertyRow(strings.fileNameLabel, file.name)
+                PropertyRow(strings.storageType, if (file.isInternalWorkspace) strings.workspace else "SAF Document")
+                PropertyRow(strings.pathOrUri, file.absolutePath ?: file.uri?.toString() ?: "Workspace")
+                PropertyRow(strings.accessMode, if (file.isReadOnly) strings.readOnly else strings.readWrite)
+                PropertyRow(strings.languagesFormatter, language.name)
+                PropertyRow(strings.encoding, file.encodingName)
+                PropertyRow(strings.linesCount, lineCount.toString())
+                PropertyRow(strings.charactersCount, characterCount.toString())
+                PropertyRow(strings.fileSizeLabel, formatBytes(file.fileSize))
+                PropertyRow(strings.modifiedDate, dateFormat.format(Date(file.lastModified)))
             }
         },
         confirmButton = {
             TextButton(onClick = onDismiss) {
-                Text("Close")
+                Text(strings.close)
             }
         }
     )

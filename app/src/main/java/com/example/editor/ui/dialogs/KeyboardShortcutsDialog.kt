@@ -45,6 +45,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.editor.settings.LocalAppStrings
 import com.example.editor.shortcuts.EditorShortcuts
 import com.example.editor.shortcuts.ShortcutCategory
 
@@ -52,6 +53,7 @@ import com.example.editor.shortcuts.ShortcutCategory
 fun KeyboardShortcutsDialog(
     onDismiss: () -> Unit
 ) {
+    val strings = LocalAppStrings.current
     var searchQuery by remember { mutableStateOf("") }
     var selectedCategory by remember { mutableStateOf<ShortcutCategory?>(null) }
 
@@ -76,7 +78,7 @@ fun KeyboardShortcutsDialog(
                     modifier = Modifier.size(24.dp)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("Keyboard Shortcuts", fontWeight = FontWeight.Bold)
+                Text(strings.shortcuts, fontWeight = FontWeight.Bold)
             }
         },
         text = {
@@ -120,7 +122,7 @@ fun KeyboardShortcutsDialog(
                             onClick = { selectedCategory = cat },
                             text = {
                                 Text(
-                                    cat?.title ?: "All",
+                                    cat?.title ?: strings.categoryAll,
                                     fontSize = 11.sp,
                                     maxLines = 1
                                 )
@@ -206,7 +208,7 @@ fun KeyboardShortcutsDialog(
                 onClick = onDismiss,
                 modifier = Modifier.testTag("shortcuts_close_button")
             ) {
-                Text("Close")
+                Text(strings.close)
             }
         }
     )

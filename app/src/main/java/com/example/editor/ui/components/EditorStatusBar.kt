@@ -31,6 +31,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.editor.settings.LocalAppStrings
 import com.example.editor.tabs.EditorTab
 
 @Composable
@@ -42,6 +43,7 @@ fun EditorStatusBar(
     autoSaveStatusText: String?,
     modifier: Modifier = Modifier
 ) {
+    val strings = LocalAppStrings.current
     val containerBg = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
     val contentColor = MaterialTheme.colorScheme.onSurfaceVariant
 
@@ -69,7 +71,7 @@ fun EditorStatusBar(
                 )
                 Spacer(modifier = Modifier.width(5.dp))
                 Text(
-                    text = "Auto-saving...",
+                    text = strings.autoSaving,
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Medium,
                     color = MaterialTheme.colorScheme.primary
@@ -83,20 +85,20 @@ fun EditorStatusBar(
                 )
                 Spacer(modifier = Modifier.width(5.dp))
                 Text(
-                    text = "Auto-saving to local storage...",
+                    text = strings.autoSaving,
                     fontSize = 11.sp,
                     color = Color(0xFFE5A00D)
                 )
             } else if (activeTab != null) {
                 Icon(
                     imageVector = Icons.Default.CheckCircle,
-                    contentDescription = "Saved",
+                    contentDescription = strings.saved,
                     tint = Color(0xFF2EA043), // Green
                     modifier = Modifier.size(10.dp)
                 )
                 Spacer(modifier = Modifier.width(5.dp))
                 Text(
-                    text = autoSaveStatusText ?: "Saved",
+                    text = autoSaveStatusText ?: strings.saved,
                     fontSize = 11.sp,
                     color = contentColor
                 )
@@ -108,7 +110,7 @@ fun EditorStatusBar(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Ln $line, Col $column",
+                text = "${strings.line} $line, ${strings.col} $column",
                 fontSize = 11.sp,
                 fontFamily = FontFamily.Monospace,
                 color = contentColor
