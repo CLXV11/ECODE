@@ -4,17 +4,18 @@
 
 **High-Performance Native Android Code Editor & Mobile IDE Engine**
 
-[![Build](https://img.shields.io/badge/Build-passing-34A853?style=for-the-badge&logo=github&logoColor=white)](.github/workflows/build-apk.yml)
-[![Kotlin](https://img.shields.io/badge/Kotlin-2.0-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white)](https://kotlinlang.org)
-[![Jetpack Compose](https://img.shields.io/badge/Jetpack%20Compose-BOM%202024.06-4285F4?style=for-the-badge&logo=jetpackcompose&logoColor=white)](https://developer.android.com/jetpack/compose)
-[![API](https://img.shields.io/badge/API-24+-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://developer.android.com)
-[![License](https://img.shields.io/badge/License-Apache%202.0-2196F3?style=for-the-badge)](LICENSE)
-[![Network](https://img.shields.io/badge/Network-Not%20Required-34A853?style=for-the-badge)](#security--offline-architecture)
+  <a href=".github/workflows/build-apk.yml"><img src="https://img.shields.io/badge/Build-passing-00E676?style=flat&logo=github&logoColor=black" height="30" /></a>
+  <a href="https://kotlinlang.org"><img src="https://img.shields.io/badge/Kotlin-2.0-7F52FF?style=flat&logo=kotlin&logoColor=white" height="30" /></a>
+  <a href="https://developer.android.com/jetpack/compose"><img src="https://img.shields.io/badge/Jetpack%20Compose-BOM%202024.06-00E5FF?style=flat&logo=jetpackcompose&logoColor=white" height="30" /></a>
+  <a href="https://developer.android.com"><img src="https://img.shields.io/badge/API-24+-3DDC84?style=flat&logo=android&logoColor=black" height="30" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache%202.0-FF9100?style=flat&logo=apache&logoColor=white" height="30" /></a>
+  <a href="#security--offline-architecture"><img src="https://img.shields.io/badge/Network-Not%20Required-FF0055?style=flat&logo=wifi&logoColor=white" height="30" /></a>
+</p>
 
-<br/>
-
-[![Telegram](https://img.shields.io/badge/Telegram-@EPCD11-2AABEE?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/EPCD11)
-[![Discord](https://img.shields.io/badge/Discord-Join%20Server-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/FkssmYFY)
+<p align="center">
+  <a href="https://t.me/EPCD11"><img src="https://img.shields.io/badge/Telegram-@EPCD11-0088cc?style=flat&logo=telegram&logoColor=white" height="34" /></a>
+  <a href="https://discord.gg/FkssmYFY"><img src="https://img.shields.io/badge/Discord-Join%20Server-5865F2?style=flat&logo=discord&logoColor=white" height="34" /></a>
+</p>
 
 </div>
 
@@ -71,6 +72,16 @@ ECODE features custom vector renderers designed to replicate official language b
 [![Markdown](https://img.shields.io/badge/Markdown-000000?style=flat-square&logo=markdown&logoColor=white)](https://daringfireball.net/projects/markdown/)
 [![JSON](https://img.shields.io/badge/JSON-000000?style=flat-square&logo=json&logoColor=white)](https://www.json.org)
 [![Shell](https://img.shields.io/badge/Shell%2FBash-4EAA25?style=flat-square&logo=gnubash&logoColor=white)](https://www.gnu.org/software/bash/)
+[![C](https://img.shields.io/badge/C-A8B9CC?style=flat-square&logo=c&logoColor=white)](https://en.cppreference.com/w/c)
+[![Assembly](https://img.shields.io/badge/Assembly-6E4C13?style=flat-square&logo=webassembly&logoColor=white)](https://en.wikipedia.org/wiki/Assembly_language)
+[![Sass](https://img.shields.io/badge/Sass-CC6699?style=flat-square&logo=sass&logoColor=white)](https://sass-lang.com)
+[![Vue.js](https://img.shields.io/badge/Vue.js-4FC08D?style=flat-square&logo=vuedotjs&logoColor=white)](https://vuejs.org)
+[![Angular](https://img.shields.io/badge/Angular-DD0031?style=flat-square&logo=angular&logoColor=white)](https://angular.dev)
+[![Lua](https://img.shields.io/badge/Lua-2C2D72?style=flat-square&logo=lua&logoColor=white)](https://www.lua.org)
+[![R](https://img.shields.io/badge/R-276DC3?style=flat-square&logo=r&logoColor=white)](https://www.r-project.org)
+[![GraphQL](https://img.shields.io/badge/GraphQL-E10098?style=flat-square&logo=graphql&logoColor=white)](https://graphql.org)
+[![YAML](https://img.shields.io/badge/YAML-CB171E?style=flat-square&logo=yaml&logoColor=white)](https://yaml.org)
+[![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white)](https://www.docker.com)
 
 </div>
 
